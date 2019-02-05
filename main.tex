@@ -116,15 +116,22 @@ as experts. For example, Zalando (a fashion online retailer)
 relies on an influencer platform named ``Collabary"\footnote{\url{https://www.collabary.com}} to identify influencers.
 \end{itemize}
 
-This paper represents a step towards bridging the gap between these two classes by leveraging human workers for influencers identification. We consider a task where the crowd is asked
-to name influencers, from where we collect a set of users 
-recognized by the crowd as influencers. We introduce a new algorithm
-called \textit{EinC} (Expert in the Crowd)
-which combines social properties of the collected set of users  with 
-worker's reliability to identify the real influencers in this set.
+This paper represents a step towards bridging the gap between these two classes by leveraging human workers for influencers identification. We introduce a new technique called \textit{EinC} (Expert in the Crowd)
+which combines social properties of a collected set of users  with worker's reliability to identify 
+the influencers in this set.
+More specifically, we consider a task where the crowd is asked to name influencers and we use 
+a probabilitic approach to assess workers answers. 
 
+\iar{I would like to add a part about aggregation but I am missing the link, can you please help?}
 \subsection{Challenges and Contributions}
-
+Assessing workers answers in this task 
+is particularly challenging as workers are required to create content which makes it an open-ended task.
+While most of the existing aggregation methods rather deal with closed-ended task
+\cite{dawid1979maximum}, \cite{raykar2010learning}, \cite{demartini2012zencrowd},
+\textit{EinC} make a number of key contributions including:
+\begin{itemize}
+\item 
+\end{itemize}
 
 \subsection{Our Solution}
 
