@@ -107,13 +107,13 @@ content. Such a property is hard to assess by machines nowadays.
 The current techniques used to find influencers in a social network
 can be broadly classified into two groups:
 \begin{itemize}
-\item User Classification: This method consists in measuring the influence of each user 
+\item Social Influence Analysis: This method consists in measuring the influence of each user 
 based on their content in social media.
 Those satisfying a set of properties are classified as influencers (e.g 
 number of followers higher than 1000)
 \cite{Cheng2014} \cite{Lehmann2013}
  
-\item Expert identification: While the user classification
+\item Expert identification: While the Social Influence Analysis
 problem have been extensively studied, they are still not as reliable
 as experts. For example, Zalando (a fashion online retailer)
 relies on an influencer platform named ``Collabary"\footnote{\url{https://www.collabary.com}} to identify influencers.
@@ -122,7 +122,7 @@ relies on an influencer platform named ``Collabary"\footnote{\url{https://www.co
 This paper represents a step towards bridging the gap between these two classes by leveraging 
 human workers for influencers identification. 
 As a matter of fact, workers are able to generate results as 
-accurate as experts and as scalable as user classification methods.
+\textit{accurate} as experts and as \textit{scalable} as automatic user classification methods.
 We introduce a new technique called \sys
 which combines social properties of a collected set of users with worker's reliability to identify influencers.
 More specifically, we consider a task where the crowd is asked to name influencers in a predefined domain.
@@ -167,15 +167,36 @@ our technique outperforms state of the art techniques
 \end{itemize}
 To the best of our knowledge, this work is the first to find inluencers from sparse and noisy 
 crowd answers. Our proposed framework is a generic one applicable to any open-ended task
-and in a variety of domains e.g natural language processing.
+for expert/influencer finding in a variety of domains.
 
 \section{Related Work}
-In this section, we discuss relevant work on (a) Truth Inference and (b) user classification
-in social media.
+In this section, we discuss relevant work on (a) Truth Inference and (b) Social Influence Analysis
 \iar{is there a difference between using the term aggregation and truth inference?
-in such case which one is more correct in our case?}
+in such case which one is more correct in our case?, also it is better to use Social Influence Analysis
+or should I be more specific and say user classification?}
+\subsection{Truth Inference}
+A number of aggregation techniques have been proposed. In \cite{catd}, the authors 
+propose a weighted majority voting. Worker's quality is assessed by two measures: 
+a probability that reflects her reliability and a confidence based on the number of tasks she
+answered. This technique aims at assigning a higher quality for workers who give 
+plenty of answers close to the truth.
 
-\subsection{Aggregation Techniques }
+In \cite{dawid1979maximum}, the authors proposed a probabilistic model 
+where a confusion matrix is used to model the worker's quality and it 
+applies the (EM) framework to infer the truth. Similarly, ZenCrowd 
+\cite{demartini2012zencrowd} applies an EM framework to compute the 
+worker's quality modeled as a probability (a real number between 0 and 1).
+An extension to ZenCrowd was proposed in \cite{li2014resolving} where
+worker's quality is modeled in a wider range (in $(-\infty,+\infty)$.1
+These methods aims at maximizing the likelihood that reliable workers tend to 
+provide correct results.\iar{not confident about this last sentence}
+More recent work\cite{yin2017aggregating} uses variational autoencoders
+to infer the true label  of objects in an unsupervised manner.
+\iar{I am adding this as it is an IJCAi17}
+
+ 
+  
+
 
 
 
