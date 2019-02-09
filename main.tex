@@ -95,9 +95,9 @@ fourth@example.com
 \section{Introduction}
 Social influence is increasingly becoming a subtle force that controls the dynamics of the social network. 
 Finding users in a network with a social influence is becoming a fundamental 
-task for several applications such as brand marketing \cite{bond201261}
-\cite{richardson2002mining} \cite{van2007new}, expert finding for question 
-answering \cite{riahi2012finding} and collaborative task execution \cite{sun2014analyzing}\cite{miao2010generative}. These users are referred to as ``influencers"
+task for several applications such as brand marketing
+~\cite{bond201261,richardson2002mining,van2007new}, expert finding for question 
+answering~\cite{riahi2012finding} and collaborative task execution~\cite{sun2014analyzing,miao2010generative}. These users are referred to as ``influencers"
 and are recognized with a set properties such as a high number of 
 followers, a regular feed about a certain topic and an ``authentic" content.
  Existing work tackles the problem from a network perspective where 
@@ -111,7 +111,7 @@ can be broadly classified into two groups:
 based on their content in social media.
 Those satisfying a set of properties are classified as influencers (e.g 
 number of followers higher than 1000)
-\cite{Cheng2014} \cite{Lehmann2013}
+\cite{Cheng2014,Lehmann2013}
  
 \item Expert identification: While the Social Influence Analysis
 problem have been extensively studied, they are still not as reliable
@@ -131,8 +131,7 @@ to control the quality of these answers. This is a common problem in crowdsourci
 and a lot of techniques have been proposed to address it.  A simple yet effective method is 
 Majority Voting. This method infers the truth from the majority as it takes the answer given by the majority of 
 workers. However, Majority Voting considers all workers equal while in reality workers have different reliabilities.
-Several algorithms have been proposed to measure worker's reliability \cite{demartini2012zencrowd}
-\cite{raykar2010learning} \cite{dawid1979maximum}. All these methods mainly focuses on three types of tasks
+Several algorithms have been proposed to measure worker's reliability~\cite{demartini2012zencrowd,raykar2010learning,dawid1979maximum}. All these methods mainly focuses on three types of tasks
 \cite{ZhengLLSC17}: decision-making task, single/multiple choice task or numeric tasks. In these tasks, the number of
 possible answers is usually predefined for example, in decision-making tasks, the answer could be either True or False. 
 However, our task is an open-ended task i.e. it requires content creation and the number of possible answers
@@ -172,27 +171,27 @@ for expert/influencer finding in a variety of domains.
 \section{Related Work}
 In this section, we discuss relevant work on (a) Truth Inference and (b) Social Influence Analysis
 \iar{is there a difference between using the term aggregation and truth inference?
-in such case which one is more correct in our case?, also it is better to use Social Influence Analysis
+which one is more correct in our case? also is  it better to use Social Influence Analysis
 or should I be more specific and say user classification?}
 \subsection{Truth Inference}
-A number of aggregation techniques have been proposed. In \cite{catd}, the authors 
-propose a weighted majority voting. Worker's quality is assessed by two measures: 
+Li et al.~\cite{catd} proposed a weighted majority voting. In their technique, 
+worker's quality is assessed by two measures: 
 a probability that reflects her reliability and a confidence based on the number of tasks she
 answered. This technique aims at assigning a higher quality for workers who give 
 plenty of answers close to the truth.
-In \cite{dawid1979maximum}, the authors proposed a probabilistic model 
+In~\cite{dawid1979maximum}, the authors proposed a probabilistic model 
 where a confusion matrix is used to model the worker's quality and it 
-applies the (EM) framework to infer the truth. Similarly, ZenCrowd 
+applies the EM framework to infer the truth. Similarly, ZenCrowd 
 \cite{demartini2012zencrowd} applies an EM framework to compute the 
 worker's quality modeled as a probability (a real number between 0 and 1).
-An extension to ZenCrowd was proposed in \cite{li2014resolving} where
-worker's quality is modeled in a wider range (in $(-\infty,+\infty)$.1
+An extension to ZenCrowd was proposed in~\cite{li2014resolving} where
+worker's quality is modeled in a wider range (in $(-\infty,+\infty)$.
 These methods aims at maximizing the likelihood that reliable workers tend to 
 provide correct results.\iar{not confident about this last sentence}
-More recent work\cite{yin2017aggregating} uses variational autoencoders
+More recent work~\cite{yin2017aggregating} uses variational autoencoders
 to infer the true label  of objects in an unsupervised manner.
 \iar{I am adding this as it is an IJCAI'17 but it is not clear to me what is the main 
-intuition other then using autoencoders for aggregation}
+contribution other then using autoencoders for aggregation}
 
  
   
