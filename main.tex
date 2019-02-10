@@ -194,6 +194,9 @@ They assign to each user a score based on the computed influence and
 define the influencers as the top-N users with the highest scores.
 \iar{help me to add limitations of these methods plus why we are better}  
 \section{Methods}
+We are dealing with a specific type of open-ended questions, where workers are supposed to provide a list of items
+(in our application, items are potential influencers). 
+Among the provided items, some are of high-quality and some are not. Our goal is to find the items of high-quality. 
 In this section, we introduce our proposed framework that we refer to as
 \sys. We first formalize the problem then we introduce our method for
  measuring the influence of users and the quality of workers. 
@@ -201,8 +204,13 @@ In this section, we introduce our proposed framework that we refer to as
  We extend our model by introducing priors for our measure of worker's quality to
  capture our confidence  on this measure.
 \subsection{Problem Definition}
+\smallskip
+\noindent\textbf{Notations.} Throughout this paper, we use boldface lowercase letters to denote vectors and boldface uppercase letters to denote matrices. For an arbitrary matrix $\mathbf{M}$, we use $\mathbf{M}_{i,j}$ to denote the entry at the $i$-th row and $j$-th column. We use capital letters (e.g., $\mathcal{P}$) in calligraphic math font to denote sets.
 
+We use $\mathcal{I} = \{i_1, \ldots, i_n\}$ to denote the set of items, and  $\mathcal{J} = \{j_1, \ldots, j_m \}$ to denote the set of workers. For each item $i \in \mathcal{I}$, we have its features organized as a vector $\mathbf{x}_i$; and similarly, each worker $j \in \mathcal{J}$ has a feature vector $\mathbf{y}_j$. We use $\mathbf{A}_{i,j}=1$ to denote that item $i$ is an answer provided by worker $j$, and $\mathbf{A}_{i,j}=0$ otherwise. $\mathbf{A}_{i,j}$ is a sparse matrix where only a small proportion of the entries is non-zero. Our goal is find those items in $\mathcal{I}$ that are of high-quality, denoted by $\mathcal{SI} \subset \mathcal{I}$. We use $z_i = 1$ to denote $i\in \mathcal{SI}$, and $z_i = 0$ otherwise.
 
+\smallskip
+\noindent\textbf{Problem Statement.} Given $\mathbf{x}_i$ for each $i\in \mathcal{I}$ and $\mathbf{x}_j$ for each $j\in \mathcal{J}$, and the answer matrix $\mathbf{A}$, our goal is to infer $z_i$ for all $i\in \mathcal{I}$.
 \subsection{Model 1}
 
 \subsection{Model 2}
