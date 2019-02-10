@@ -243,7 +243,28 @@ If we consider workers' answers as a generative process, the above equation is e
     \label{eq:item_worker}
 \end{equation}
 
+\subsection{EM Algorithm for \sys:} 
+The EM algorithm iteratively takes two steps, i.e., the E-step and the
+M-step. In each iteration, the E-step estimates the true labels of items given
+the current parameters; the M-step then updates the estimation of
+the parameters given the newly estimated true labels.
 
+\noindent\textbf{E-step:}
+\begin{equation}
+    P(z_i|\mathbf{A}_{i,j},r_{j},x_i,\mathcal{W}_I) \propto \prod_{j \in \mathcal{J}} P(\mathbf{A}_{i,j}|z_i,r_{j})\times P(z_i|x_i,\mathcal{W}_I)
+    \label{eq:e_step}
+\end{equation}
+
+\noindent\textbf{M-step:}
+\begin{equation}
+    r_j=r_j+\eta \frac{\partial \mathcal{T}}{\partial r_j}
+    \label{eq:m_rj}
+\end{equation}
+With $\frac{\partial \mathcal{T}}{\partial r_j}$ is given by Equation~(\ref{eq:grad_rj}):
+\begin{equation}
+    \frac{\partial \mathcal{T}}{\partial r_j}=\frac{P(\mathbf{A}_{i,j}=z_i)}{r_j}-\frac{P(\mathbf{A}_{i,j}\neq z_i)}{1-r_j}
+    \label{eq:grad_rj}
+\end{equation}
 
 \section{Experiments}
 
