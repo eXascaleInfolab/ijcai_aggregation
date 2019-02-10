@@ -33,26 +33,6 @@
 % the following package is optional:
 %\usepackage{latexsym} 
 
-% Following comment is from ijcai97-submit.tex:
-% The preparation of these files was supported by Schlumberger Palo Alto
-% Research, AT\&T Bell Laboratories, and Morgan Kaufmann Publishers.
-% Shirley Jowell, of Morgan Kaufmann Publishers, and Peter F.
-% Patel-Schneider, of AT\&T Bell Laboratories collaborated on their
-% preparation.
-
-% These instructions can be modified and used in other conferences as long
-% as credit to the authors and supporting agencies is retained, this notice
-% is not changed, and further modification or reuse is not restricted.
-% Neither Shirley Jowell nor Peter F. Patel-Schneider can be listed as
-% contacts for providing assistance without their prior permission.
-
-% To use for other conferences, change references to files and the
-% conference appropriate and use other authors, contacts, publishers, and
-% organizations.
-% Also change the deadline and address for returning papers and the length and
-% page charge instructions.
-% Put where the files are available in the appropriate places.
-
 \title{\sys: Finding Influencers Using an Open-Ended Task}
 
 % Single author syntax
@@ -192,17 +172,25 @@ More recent work~\cite{yin2017aggregating} uses variational autoencoders
 to infer the true label  of objects in an unsupervised manner.
 \iar{I am adding this as it is an IJCAI'17 but it is not clear to me what is the main 
 contribution other then using autoencoders for aggregation}
-
- 
-  
-
-
-
-
 \subsection{Social Influence Analysis}
-
-
-
+%To enable our method to be able to identify real influencers, we incorporate in our model
+%a neural network to learn influencer's properties. 
+Several approaches have been proposed 
+to measure the influence of users in a social media platforms.
+\cite{Cheng2014} proposes a geo-spatial-driven approach to find experts 
+by using the GPS coordinates of millions of Twitter users. In this approach, user's influence
+is a combination of her local authority and her topical authority reflecting respectively
+her influence on the audience close to her in distance and in a specific topic.
+\cite{Lehmann2013} define a framework to classify users as influencers 
+based on three main features: (1) their visibility measured by the number of followers and tweeter
+lists containing them, (2) their tweeting activity measured by the number of tweets and retweets 
+per day and (3) their topic focus measured by the number of articles tweeted 
+about a specific topic. 
+\cite{wei2016learning} develop a probabilistic method to find topic experts in Twitter. They
+measure the influence of users based on her local relevance and three main types of relation: 
+follower relation, user-list relation and list-list relation. 
+They assign to each user a score based on the computed influence and
+define the influencers as the top-N users with the highest scores.
 
 \section{Method}
 
