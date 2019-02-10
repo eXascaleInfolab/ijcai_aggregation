@@ -250,10 +250,23 @@ the current parameters; the M-step then updates the estimation of
 the parameters given the newly estimated true labels.
 
 \noindent\textbf{E-step:}
+From the Bayes rule, the item's quality is given by Equation~(\ref{eq:dist_cond}):
+\begin{align}
+    P(z_i|\mathbf{A}_{i,j},\phi_{j},x_i,\mathcal{W}_I)&=\frac{P(\mathbf{A}_{i,j}|z_i,r_j,x_i,\mathcal{W}_I)\times P(z_i|r_j,x_i,\mathcal{W}_I)}{P(\mathbf{A}_{i,j}|r_j,x_i,\mathcal{W}_I)}\nonumber\\
+        &\propto P(\mathbf{A}_{i,j}|z_i,r_j)\times P(z_i|x_i,\mathcal{W}_I)
+    \label{eq:dist_cond}
+\end{align}
+We assume workers answers are independent from each other and 
+that item's quality $z_i$ depend only on the reliability of workers $j$ who named the
+item $i$ (i.e, $\mathbf{A}_{i,j}=1$) hence Equation~(\ref{eq:dist_cond})
+could be expressed as in Equation~(\ref{eq:e_step}):
 \begin{equation}
-    P(z_i|\mathbf{A}_{i,j},r_{j},x_i,\mathcal{W}_I) \propto \prod_{j \in \mathcal{J}} P(\mathbf{A}_{i,j}|z_i,r_{j})\times P(z_i|x_i,\mathcal{W}_I)
+    P(z_i) \propto \prod_{j \in \mathcal{J},\mathbf{A}_{i,j}=1} P(\mathbf{A}_{i,j}|z_i,r_{j})\times P(z_i|x_i,\mathcal{W}_I)
     \label{eq:e_step}
 \end{equation}
+Therefore, the item's quality is a function of both the worker-item relation and the item's quality with the priors.
+The worker-item relation can be computed as in Equation~(\ref{eq:item_worker}) and the item's quality with 
+the priors can be computed as in Equation~(\ref{eq:item_features}).
 
 \noindent\textbf{M-step:}
 \begin{equation}
