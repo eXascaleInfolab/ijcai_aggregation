@@ -216,11 +216,13 @@ To infer the quality of an item, our basic assumption is that answers provided b
 We assume that the item's quality $z_i$ is a random variable that can potentially take two values (i.e., 1 or 0), thus following a Bernoulli distribution:
 \begin{equation}
     z_i \sim Bernoulli(\theta_i)
+    \label{eq:dis_item}
 \end{equation}
 
 We assume that the quality of an item is related to its features. We formalize thus assumption by conditioning the distribution of $z_i$ on its features $x_i$:
 \begin{equation}
     \theta_i  = \text{sigmoid} (f^{\mathcal{W}_I}(\mathbf{x}_i))
+    \label{eq:item_features}
 \end{equation}
 where $f$ is a neural network, and $\mathcal{W}_I$ is the set of weight parameters of the neural network.
 
@@ -231,12 +233,14 @@ To connect item quality and worker reliability through their naming relation, we
 
 \begin{equation}
     P(\mathbf{A}_{i,j} = z_i) =  r_j, P(\mathbf{A}_{i,j} \ne z_i) = 1- r_j
+    \label{eq:item_worker_rel}
 \end{equation}
 
 If we consider workers' answers as a generative process, the above equation is equivalent to:
 %we assume that a worker's answer $\mathbf{A}_{i,j}$ is conditioned on both quantities, formalized as below:
 \begin{equation}
     P(\mathbf{A}_{i,j} | z_i,  r_j) = (1- r_j)^{|z_i-\mathbf{A}_{i,j}|}\times  r_j^{(1-|z_i-\mathbf{A}_{i,j}|)}
+    \label{eq:item_worker}
 \end{equation}
 
 
