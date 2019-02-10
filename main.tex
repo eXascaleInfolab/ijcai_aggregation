@@ -195,7 +195,7 @@ define the influencers as the top-N users with the highest scores.
 \iar{help me to add limitations of these methods plus why we are better}  
 \section{Methods}
 We are dealing with a specific type of open-ended questions, where workers are supposed to provide a list of items
-(in our application, items are potential influencers). 
+(in our application, items are potential influencers) . 
 Among the provided items, some are of high-quality and some are not. Our goal is to find the items of high-quality. 
 In this section, we introduce our proposed framework that we refer to as
 \sys. We first formalize the problem then we introduce our method for
@@ -210,10 +210,35 @@ In this section, we introduce our proposed framework that we refer to as
 We use $\mathcal{I} = \{i_1, \ldots, i_n\}$ to denote the set of items, and  $\mathcal{J} = \{j_1, \ldots, j_m \}$ to denote the set of workers. For each item $i \in \mathcal{I}$, we have its features organized as a vector $\mathbf{x}_i$; and similarly, each worker $j \in \mathcal{J}$ has a feature vector $\mathbf{y}_j$. We use $\mathbf{A}_{i,j}=1$ to denote that item $i$ is an answer provided by worker $j$, and $\mathbf{A}_{i,j}=0$ otherwise. $\mathbf{A}_{i,j}$ is a sparse matrix where only a small proportion of the entries is non-zero. Our goal is find those items in $\mathcal{I}$ that are of high-quality, denoted by $\mathcal{SI} \subset \mathcal{I}$. We use $z_i = 1$ to denote $i\in \mathcal{SI}$, and $z_i = 0$ otherwise.
 
 \smallskip
-\noindent\textbf{Problem Statement.} Given $\mathbf{x}_i$ for each $i\in \mathcal{I}$ and $\mathbf{x}_j$ for each $j\in \mathcal{J}$, and the answer matrix $\mathbf{A}$, our goal is to infer $z_i$ for all $i\in \mathcal{I}$.
-\subsection{Model 1}
+\noindent\textbf{Problem Statement.} Given $\mathbf{x}_i$ for each $i\in \mathcal{I}$ and $\mathbf{y}_j$ for each $j\in \mathcal{J}$, and the answer matrix $\mathbf{A}$, our goal is to infer $z_i$ for all $i\in \mathcal{I}$.
+\subsection{Model}
+To infer the quality of an item, our basic assumption is that answers provided by the crowd are not fully reliable. For each worker $j\in \mathcal{J}$, we use $r_j \in [0,1]$ to denote his/her reliability, where $r_j=1$ indicates the worker is fully reliable and $r_j=0$ indicates the worker is not reliable.
+We assume that the item's quality $z_i$ is a random variable that can potentially take two values (i.e., 1 or 0), thus following a Bernoulli distribution:
+\begin{equation}
+    z_i \sim Bernoulli(\theta_i)
+\end{equation}
 
-\subsection{Model 2}
+We assume that the quality of an item is related to its features. We formalize thus assumption by conditioning the distribution of $z_i$ on its features $x_i$:
+\begin{equation}
+    \theta_i  = \text{sigmoid} (f^{\mathcal{W}_I}(\mathbf{x}_i))
+\end{equation}
+where $f$ is a neural network, and $\mathcal{W}_I$ is the set of weight parameters of the neural network.
+
+In our problem setting, the worker-item relation is valuable and worth to be exploited as if we know the reliability of the workers who name the item, then we have a better idea of the quality of the item. Similarly, worker reliability
+is also related to which items they provide. For example, if we already know that most of the items a worker provides are of high-quality, then it is likely that this worker is reliable. 
+
+To connect item quality and worker reliability through their naming relation, we assume that the worker reliability is further defined as the probability that the worker's answer is right:
+
+\begin{equation}
+    P(\mathbf{A}_{i,j} = z_i) =  r_j, P(\mathbf{A}_{i,j} \ne z_i) = 1- r_j
+\end{equation}
+
+If we consider workers' answers as a generative process, the above equation is equivalent to:
+%we assume that a worker's answer $\mathbf{A}_{i,j}$ is conditioned on both quantities, formalized as below:
+\begin{equation}
+    P(\mathbf{A}_{i,j} | z_i,  r_j) = (1- r_j)^{|z_i-\mathbf{A}_{i,j}|}\times  r_j^{(1-|z_i-\mathbf{A}_{i,j}|)}
+\end{equation}
+
 
 
 \section{Experiments}
