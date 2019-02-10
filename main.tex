@@ -22,6 +22,7 @@
 \usepackage{booktabs}
 \usepackage{algorithm}
 \usepackage{algorithmic}
+\usepackage{amsmath, amsthm, amssymb}
 \urlstyle{same}
 \usepackage[T1]{fontenc}
 \usepackage{colortbl}
@@ -232,14 +233,14 @@ is also related to which items they provide. For example, if we already know tha
 To connect item quality and worker reliability through their naming relation, we assume that the worker reliability is further defined as the probability that the worker's answer is right:
 
 \begin{equation}
-    P(\mathbf{A}_{i,j} = z_i) =  r_j, P(\mathbf{A}_{i,j} \ne z_i) = 1- r_j
+    p(\mathbf{A}_{i,j} = z_i) =  r_j, p(\mathbf{A}_{i,j} \ne z_i) = 1- r_j
     \label{eq:item_worker_rel}
 \end{equation}
 
 If we consider workers' answers as a generative process, the above equation is equivalent to:
 %we assume that a worker's answer $\mathbf{A}_{i,j}$ is conditioned on both quantities, formalized as below:
 \begin{equation}
-    P(\mathbf{A}_{i,j} | z_i,  r_j) = (1- r_j)^{|z_i-\mathbf{A}_{i,j}|}\times  r_j^{(1-|z_i-\mathbf{A}_{i,j}|)}
+    p(\mathbf{A}_{i,j} | z_i,  r_j) = (1- r_j)^{|z_i-\mathbf{A}_{i,j}|}\times  r_j^{(1-|z_i-\mathbf{A}_{i,j}|)}
     \label{eq:item_worker}
 \end{equation}
 
@@ -252,8 +253,8 @@ the parameters given the newly estimated true labels.
 \noindent\textbf{E-step:}
 From the Bayes rule, the item's quality is given by Equation~(\ref{eq:dist_cond}):
 \begin{align}
-    P(z_i|\mathbf{A}_{i,j},\phi_{j},x_i,\mathcal{W}_I)&=\frac{P(\mathbf{A}_{i,j}|z_i,r_j,x_i,\mathcal{W}_I)\times P(z_i|r_j,x_i,\mathcal{W}_I)}{P(\mathbf{A}_{i,j}|r_j,x_i,\mathcal{W}_I)}\nonumber\\
-        &\propto P(\mathbf{A}_{i,j}|z_i,r_j)\times P(z_i|x_i,\mathcal{W}_I)
+    p(z_i|\mathbf{A}_{i,j},\phi_{j},x_i,\mathcal{W}_I)&=\frac{p(\mathbf{A}_{i,j}|z_i,r_j,x_i,\mathcal{W}_I)\times p(z_i|r_j,x_i,\mathcal{W}_I)}{p(\mathbf{A}_{i,j}|r_j,x_i,\mathcal{W}_I)}\nonumber\\
+        &\propto p(\mathbf{A}_{i,j}|z_i,r_j)\times p(z_i|x_i,\mathcal{W}_I)
     \label{eq:dist_cond}
 \end{align}
 We assume workers answers are independent from each other and 
@@ -261,7 +262,7 @@ that item's quality $z_i$ depend only on the reliability of workers $j$ who name
 item $i$ (i.e, $\mathbf{A}_{i,j}=1$) hence Equation~(\ref{eq:dist_cond})
 could be expressed as in Equation~(\ref{eq:e_step}):
 \begin{equation}
-    P(z_i) \propto \prod_{j \in \mathcal{J},\mathbf{A}_{i,j}=1} P(\mathbf{A}_{i,j}|z_i,r_{j})\times P(z_i|x_i,\mathcal{W}_I)
+    p(z_i) \propto \prod_{j \in \mathcal{J},\mathbf{A}_{i,j}=1} p(\mathbf{A}_{i,j}|z_i,r_{j})\times p(z_i|x_i,\mathcal{W}_I)
     \label{eq:e_step}
 \end{equation}
 Therefore, the item's quality is a function of both the worker-item relation and the item's quality with the priors.
@@ -269,16 +270,34 @@ The worker-item relation can be computed as in Equation~(\ref{eq:item_worker}) a
 the priors can be computed as in Equation~(\ref{eq:item_features}).
 
 \noindent\textbf{M-step:}
+Given the item's quality estimated by the E-step, we maximize
+the following likelihood function to estimate the parameters:
+\begin{align}
+   \mathcal{L}
+    &=\sum_{z_i}p(z_i)\log p(\mathbf{A_{i,j}},z_i|\phi_j,\mathbf{x}_i,\mathcal{W}_I)\nonumber\\
+    &=\sum_{z_i}p(z_i)\log (p(\mathbf{A}_{i,j}| z_i , \phi_j) \times p(z_i |\mathbf{x}_i;\mathcal{W}_I)) \nonumber\\
+    &=\sum_{z_i}p(z_i) (\log p(\mathbf{A}_{i,j}| z_i , \phi_j)+\log p(z_i |\mathbf{x}_i;\mathcal{W}_I)) \nonumber\\
+    &=\underbrace{\sum_{z_i}p(z_i) \log p(\mathbf{A}_{i,j}| z_i , \phi_j)}_{\mathcal{M}_1}
+    +\underbrace{\sum_{z_i}p(z_i)\log p(z_i |\mathbf{x}_i;\mathcal{W}_I)}_{\mathcal{M}_2}
+    \label{eq:likelihood_m}
+\end{align}
+where $p(z_i)$ is obtained by the E-step (Equation~(\ref{eq:e_step})). With the obtained expression in 
+Equation~(\ref{eq:likelihood_m}), the M-step can be decomposed in two parts independent from each other.
+The first part namely $\mathcal{M}_1$ is solved via a stochastic gradient
+ascent (SGA) method to update $r_j$.
 \begin{equation}
     r_j=r_j+\eta \frac{\partial \mathcal{T}}{\partial r_j}
     \label{eq:m_rj}
 \end{equation}
 With $\frac{\partial \mathcal{T}}{\partial r_j}$ is given by Equation~(\ref{eq:grad_rj}):
 \begin{equation}
-    \frac{\partial \mathcal{T}}{\partial r_j}=\frac{P(\mathbf{A}_{i,j}=z_i)}{r_j}-\frac{P(\mathbf{A}_{i,j}\neq z_i)}{1-r_j}
+    \frac{\partial \mathcal{T}}{\partial r_j}=\frac{p(\mathbf{A}_{i,j}=z_i)}{r_j}-\frac{p(\mathbf{A}_{i,j}\neq z_i)}{1-r_j}
     \label{eq:grad_rj}
 \end{equation}
-
+The second part namely $\mathcal{M}_2$  is exactly the same as the objective function for 
+training a Neural Network, i.e., the opposite of a cross-entropy loss function. 
+It therefore can be optimized using a stochastic gradient descent.
+\iar{please let me know if what is written is correct and/or requires more derivations}
 \section{Experiments}
 
 \subsection{Experimental Setup}
