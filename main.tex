@@ -33,7 +33,6 @@
 \newcommand{\sys}{****\xspace}
 % the following package is optional:
 %\usepackage{latexsym} 
-
 \title{\sys: Finding Influencers Using an Open-Ended Task}
 
 % Single author syntax
@@ -253,7 +252,7 @@ the parameters given the newly estimated true labels.
 \noindent\textbf{E-step:}
 From the Bayes rule, the item's quality is given by Equation~(\ref{eq:dist_cond}):
 \begin{align}
-    p(z_i|\mathbf{A}_{i,j},\phi_{j},x_i,\mathcal{W}_I)&=\frac{p(\mathbf{A}_{i,j}|z_i,r_j,x_i,\mathcal{W}_I)\times p(z_i|r_j,x_i,\mathcal{W}_I)}{p(\mathbf{A}_{i,j}|r_j,x_i,\mathcal{W}_I)}\nonumber\\
+    p(z_i|\mathbf{A}_{i,j},r_{j},x_i,\mathcal{W}_I)&=\frac{p(\mathbf{A}_{i,j}|z_i,r_j,x_i,\mathcal{W}_I)\times p(z_i|r_j,x_i,\mathcal{W}_I)}{p(\mathbf{A}_{i,j}|r_j,x_i,\mathcal{W}_I)}\nonumber\\
         &\propto p(\mathbf{A}_{i,j}|z_i,r_j)\times p(z_i|x_i,\mathcal{W}_I)
     \label{eq:dist_cond}
 \end{align}
@@ -276,10 +275,10 @@ Given the item's quality estimated by the E-step, we maximize
 the following likelihood function to estimate the parameters:
 \begin{align}
    \mathcal{L}
-    &=\sum_{z_i}p(z_i)\log p(\mathbf{A_{i,j}},z_i|\phi_j,\mathbf{x}_i,\mathcal{W}_I)\nonumber\\
-    &=\sum_{z_i}p(z_i)\log (p(\mathbf{A}_{i,j}| z_i , \phi_j) \times p(z_i |\mathbf{x}_i;\mathcal{W}_I)) \nonumber\\
-    &=\sum_{z_i}p(z_i) (\log p(\mathbf{A}_{i,j}| z_i , \phi_j)+\log p(z_i |\mathbf{x}_i;\mathcal{W}_I)) \nonumber\\
-    &=\underbrace{\sum_{z_i}p(z_i) \log p(\mathbf{A}_{i,j}| z_i , \phi_j)}_{\mathcal{M}_1}
+    &=\sum_{z_i}p(z_i)\log p(\mathbf{A_{i,j}},z_i|r_j,\mathbf{x}_i,\mathcal{W}_I)\nonumber\\
+    &=\sum_{z_i}p(z_i)\log (p(\mathbf{A}_{i,j}| z_i , r_j) \times p(z_i |\mathbf{x}_i;\mathcal{W}_I)) \nonumber\\
+    &=\sum_{z_i}p(z_i) (\log p(\mathbf{A}_{i,j}| z_i , r_j)+\log p(z_i |\mathbf{x}_i;\mathcal{W}_I)) \nonumber\\
+    &=\underbrace{\sum_{z_i}p(z_i) \log p(\mathbf{A}_{i,j}| z_i , r_j)}_{\mathcal{M}_1}
     +\underbrace{\sum_{z_i}p(z_i)\log p(z_i |\mathbf{x}_i;\mathcal{W}_I)}_{\mathcal{M}_2}
     \label{eq:likelihood_m}
 \end{align}
@@ -300,6 +299,80 @@ The second part namely $\mathcal{M}_2$  is exactly the same as the objective fun
 training a Neural Network, i.e., the opposite of a cross-entropy loss function. 
 It therefore can be optimized using a stochastic gradient descent.
 \iar{please let me know if what is written is correct and/or requires more derivations}
+
+\subsection{Modeling Worker Reliability with Priors}
+We have assumed so far a fixed parameter $r_j$ for worker reliability. 
+We would like to extend our model by measuring our confidence in this parameter.
+For example, suppose worker 1 has named 5 real influencers and worker 2 has named 
+3 real influencers and 2 random names. In this case, we should be more confident
+regarding $r_1$ than $r_2$. We proceed by assuming a Beta distribution for $r_j$:
+\begin{equation}
+		r_j \sim Beta(A_j,B_j)
+		\label{eq:rj_dist}
+\end{equation}
+With priors on $r_j$, the closed form solution  for EM updates is no longer possible.
+We develop a meanfield variational approach to approximate the posterior distribution 
+$p(z,r)$ over all hidden variables. 
+The main idea in the variational EM framework \cite{bayes2008variational} is to approximate $p(z,r)$ 
+by a variational distribution $q(z,r)$ and to assume that it factorizes over
+the latent variables $z$ and $r$ as expressed in Equation~(\ref{eq:dist_fact}).
+\begin{equation}
+	q(z,r)=\prod_{i} q(z_i) \prod_j q(r_j)
+	\label{eq:dist_fact}
+\end{equation}
+
+We further assume the forms of the factor functions q:
+\begin{align}
+	q(z_i)=Bernoulli(\phi_i) \\
+	q(r_j)=Beta(\alpha_j,\beta_j)
+\end{align}
+where $\phi_i$, $\alpha_j$ and $beta_j$ are variational parameters
+used to perform optimization to minimize the KL-divergence $\mathbf{KL}(q||P)$, 
+making q ‘close’ to p.
+
+We can derive the update equations as follows:
+For $z_i$, we have:
+\begin{align}
+    q(z_i=0)    &\propto \prod_{j \in \mathcal{T}_{i}} \exp{\{\mathbb{E}_{q(r_j)}[\log (P(\mathbf{A}_{i,j}|z_i=0,r_j))]\}}				\nonumber \\ &\times P(z_i=0|x_i, \mathcal{W}_I)  \nonumber \\
+                &\propto \prod_{j \in \mathcal{T}_{i}} \exp{\{\mathbb{E}_{q(r_j)}[\log (1-r_j)]\}}\times (1-\theta_i) \nonumber \\
+    q(z_i=1)    &\propto \prod_{j \in \mathcal{T}_{i}} \exp{\{\mathbb{E}_{q(r_j)}[\log (P(\mathbf{A}_{i,j}|z_i=1,r_j))]\}}\nonumber \\ &\times P(z_i=1|x_i, \mathcal{W}_I)   \nonumber \\
+                &\propto \prod_{j \in \mathcal{T}_{i}} \exp{\{\mathbb{E}_{q(r_j)}[\log (r_j)]\}}\times \theta_i 
+\label{eq:q_two_poss}                
+\end{align}
+
+The expectations in Equations~(\ref{eq:q_two_poss}) can be evaluated as described in Equation~(\ref{eq:expect}):
+\begin{align}
+    \mathbb{E}_{q(r_j)}[\log (1-r_j)]&= \Psi(\beta_j)-\Psi(\alpha_j+\beta_j) \nonumber \\
+    \mathbb{E}_{q(r_j)}[\log (r_j)]&= \Psi(\alpha_j)-\Psi(\alpha_j+\beta_j)
+    \label{eq:expect}
+\end{align}
+Therefore, the expressions in Equations~(\ref{eq:q_two_poss}) can be simplified to the following equations~(\ref{eq:qzi}):
+\begin{align}
+    q(z_i=0)   &\propto \prod_{j \in \mathcal{T}_{i}} \exp{\{\Psi(\beta_j)-\Psi(\alpha_j+\beta_j)\}}\times (1-\theta_i) \nonumber \\  
+     q(z_i=1)    &\propto \prod_{j \in \mathcal{T}_{i}} \exp{\{ \Psi(\alpha_j)-\Psi(\alpha_j+\beta_j)\}}\times \theta_i  
+     \label{eq:qzi}
+\end{align}
+
+We move now to the variational update for the worker's reliability $r_j$:
+\begin{equation}
+    q(r_j) \propto \prod_{i} \exp{\{\mathbb{E}_{q(z_i)}[\log{P(\mathbf{A}_{i,j}|r_j,z_i)}]\}} \times   {P(r_j|x_j,\mathcal{W}_J)}
+\end{equation}
+We distinguish two main cases:
+\begin{itemize}
+\item if $\mathbf{A}_{i,j}=1$:
+\begin{equation}
+  q(r_j)  \propto Beta(\alpha_j+\sum_{i,\mathbf{A}_{i,j}=1}  \theta_i,\beta_j+ \sum_{i,\mathbf{A}_{i,j}=1} (1 - \theta_i) )
+  \label{eq:rj_aij_1}
+\end{equation}
+\item if $\mathbf{A}_{i,j}=0$:
+\begin{equation}
+ q(r_j)  \propto Beta(\alpha_j+\sum_{i,\mathbf{A}_{i,j}=0} (1 - \theta_i),\beta_j+ \sum_{i,\mathbf{A}_{i,j}=0} \theta_i)
+   \label{eq:rj_aij_0}
+\end{equation}
+\end{itemize}
+The update rules described above plays the role of the E-step in a variational EM approach. 
+The M-step can be performed in a similar manner as in the previous section for $z_i$.
+\iar{how to describe what we are doing with r here?}
 \section{Experiments}
 
 \subsection{Experimental Setup}
