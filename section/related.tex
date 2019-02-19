@@ -1,0 +1,48 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Related Work}
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+In this section, we discuss relevant work on (a) Truth Inference and (b) Social Influence Analysis
+\iar{is there a difference between using the term aggregation and truth inference?
+which one is more correct in our case? also is  it better to use Social Influence Analysis
+or should I be more specific and say user classification?}
+\subsection{Truth Inference}
+Li et al.~\cite{catd} proposed a weighted majority voting. In their technique, 
+worker's quality is assessed by two measures: 
+a probability that reflects her reliability and a confidence based on the number of tasks she
+answered. This technique aims at assigning a higher quality for workers who give 
+plenty of answers close to the truth.
+In~\cite{dawid1979maximum}, the authors proposed a probabilistic model 
+where a confusion matrix is used to model the worker's quality and it 
+applies the EM framework to infer the truth. Similarly, ZenCrowd 
+\cite{demartini2012zencrowd} applies an EM framework to compute the 
+worker's quality modeled as a probability (a real number between 0 and 1).
+An extension to ZenCrowd was proposed in~\cite{li2014resolving} where
+worker's quality is modeled in a wider range (in $(-\infty,+\infty)$.
+These methods aims at maximizing the likelihood that reliable workers tend to 
+provide correct results.\iar{not confident about this last sentence}
+More recent work~\cite{yin2017aggregating} uses variational autoencoders
+to infer the true label  of objects in an unsupervised manner.
+\iar{I am adding this as it is an IJCAI'17 but it is not clear to me what is the main 
+contribution other then using autoencoders for aggregation}
+
+\subsection{Social Influence Analysis}
+%To enable our method to be able to identify real influencers, we incorporate in our model
+%a neural network to learn influencer's properties. 
+Several approaches have been proposed 
+to measure the influence of users in a social media platforms.
+\cite{Cheng2014} proposes a geo-spatial-driven approach to find experts 
+by using the GPS coordinates of millions of Twitter users. In this approach, user's influence
+is a combination of her local authority and her topical authority reflecting respectively
+her influence on the audience close to her in distance and in a specific topic.
+\cite{Lehmann2013} define a framework to classify users as influencers 
+based on three main features: (1) their visibility measured by the number of followers and tweeter
+lists containing them, (2) their tweeting activity measured by the number of tweets and retweets 
+per day and (3) their topic focus measured by the number of articles tweeted 
+about a specific topic. 
+\cite{wei2016learning} develop a probabilistic method to find topic experts in Twitter. They
+measure the influence of users based on her local relevance and three main types of relation: 
+follower relation, user-list relation and list-list relation. 
+They assign to each user a score based on the computed influence and
+define the influencers as the top-N users with the highest scores.
+\iar{help me to add limitations of these methods plus why we are better}  

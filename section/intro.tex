@@ -1,0 +1,78 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Social influence is increasingly becoming a subtle force that controls the dynamics of the social network. 
+Finding users in a network with a social influence is becoming a fundamental 
+task for several applications such as brand marketing
+~\cite{bond201261,richardson2002mining,van2007new}, expert finding for question 
+answering~\cite{riahi2012finding} and collaborative task execution~\cite{sun2014analyzing,miao2010generative}. These users are referred to as ``influencers"
+and are recognized with a set properties such as a high number of 
+followers, a regular feed about a certain topic and an ``authentic" content.
+ Existing work tackles the problem from a network perspective where 
+ several approaches have been proposed to find influencers by performing content analysis and/or link analysis. However, the task of finding influencers remains a challenging task as these influencers
+exhibit several subjective properties such as the ``authenticity" of their
+content. Such a property is hard to assess by machines nowadays.
+The current techniques used to find influencers in a social network
+can be broadly classified into two groups:
+\begin{itemize}
+\item Social Influence Analysis: This method consists in measuring the influence of each user 
+based on their content in social media.
+Those satisfying a set of properties are classified as influencers (e.g 
+number of followers higher than 1000)
+\cite{Cheng2014,Lehmann2013}
+ 
+\item Expert identification: While the Social Influence Analysis
+problem have been extensively studied, they are still not as reliable
+as experts. For example, Zalando (a fashion online retailer)
+relies on an influencer platform named ``Collabary"\footnote{\url{https://www.collabary.com}} to identify influencers.
+\end{itemize}
+
+This paper represents a step towards bridging the gap between these two classes by leveraging 
+human workers for influencers identification. 
+As a matter of fact, workers are able to generate results as 
+\textit{accurate} as experts and as \textit{scalable} as automatic user classification methods.
+We introduce a new technique called \sys
+which combines social properties of a collected set of users with worker's reliability to identify influencers.
+More specifically, we consider a task where the crowd is asked to name influencers in a predefined domain.
+The collected answers contain both noisy and low-quality elements hence, it is important
+to control the quality of these answers. This is a common problem in crowdsourcing 
+and a lot of techniques have been proposed to address it.  A simple yet effective method is 
+Majority Voting. This method infers the truth from the majority as it takes the answer given by the majority of 
+workers. However, Majority Voting considers all workers equal while in reality workers have different reliabilities.
+Several algorithms have been proposed to measure worker's reliability~\cite{demartini2012zencrowd,raykar2010learning,dawid1979maximum}. All these methods mainly focuses on three types of tasks
+\cite{ZhengLLSC17}: decision-making task, single/multiple choice task or numeric tasks. In these tasks, the number of
+possible answers is usually predefined for example, in decision-making tasks, the answer could be either True or False. 
+However, our task is an open-ended task i.e. it requires content creation and the number of possible answers
+ is very large therefore the aforementioned techniques do not apply. 
+
+Assessing workers answers in this task is particularly challenging for several reasons:
+First, each worker provides a set of users who could potentially be an influencer 
+and distilling the real ``influencer" from this set is not trivial 
+based solely on the properties extracted from social media as they exhibit subjective
+properties.
+Second, when a worker $w_{1}$ provide a set of influencers but does not include an 
+influencer provided by worker $w_{2}$ there's no explicit disagreement between 
+$w_{1}$ and $w_{2}$. As a matter of fact, not naming an influencer does not mean 
+classifying her as not an influencer.  Third, the concept of worker's reliability in our case
+do not only depend on their motivation to do the task but also on their knowledge about
+influencers in a particular domain. 
+
+To address these issues, this paper introduces an Expectation Maximization (EM) 
+algorithm that learns from both worker's reliability and the influencer's properties.
+We also extend our model with efficient parameter estimation via variational inference.
+\iar{extend?}
+
+ \sys make a number of key contributions including:
+\begin{itemize}
+\item  We introduce the problem of aggregating open-ended task for influencer finding
+\item We also present an Expectation Maximization (EM)  for learning influencer's quality 
+\item We show an extension of the method using Variational Inference (VI)
+for learning worker's reliability in finding influencers of a specific domain leveraging their
+social properties 
+\item We conduct extensive experiments on real-world datasets, demonstrating that
+our technique outperforms state of the art techniques
+\end{itemize}
+To the best of our knowledge, this work is the first to find inluencers from sparse and noisy 
+crowd answers. Our proposed framework is a generic one applicable to any open-ended task
+for expert/influencer finding in a variety of domains.
