@@ -30,7 +30,13 @@
 \usepackage{url}
 \usepackage{xspace}
 \usepackage[algo2e,titlenotnumbered,boxed,ruled,vlined,linesnumbered]{algorithm2e}
-\newcommand{\sys}{****\xspace}
+\newcommand{\sys}{SoCrowd\xspace}
+
+
+\newcommand{\mkh}[1]{\textcolor{red}{(*** MK: #1 ***)}}
+\newcommand{\iar}[1]{\textcolor{blue}{(*** @Ines: #1 ***)}}
+
+
 % the following package is optional:
 %\usepackage{latexsym} 
 \title{Asking the Crowd for Social Influencer Finding: an Open-Ended Answer Aggregation Approach}
@@ -64,13 +70,23 @@ third@other.example.com,
 fourth@example.com
 }
 \fi
-\newcommand{\iar}[1]{\textcolor{blue}{(*** @Ines: #1 ***)}}
+
 \begin{document}
 
 \maketitle
 
 \begin{abstract}
-Finding social influencers is a fundamental task for many online applications, ranging from brand marketing to opinion mining. Existing methods are mainly based on supervised  learning techniques, whose performance is heavily limited by the availability of expert labels (often limited). In contrast to experts, the crowd possesses more complete knowledge -- on an aggregated level -- of influencers in many domains, such as fashion and fitness. Individual crowd workers, however, only possess fragmented knowledge that is often of low-quality. In this paper, we investigate how to effectively find social influencers by asking the crowd in the form of open-ended questions. In particular, we develop an Expectation-Maximization (EM) learning framework and a variational inference algorithm, which are able to infer the true influencers from fragmented crowd contributions while learning the reliability of individual crowd workers. Experimental results on real-world datasets show that our proposed framework substantially improves the state of the art. 
+Finding social influencers is a fundamental task for many online applications, ranging from brand
+marketing to opinion mining. Existing methods are mainly based on supervised learning techniques,
+whose performance is heavily limited by the availability of expert labels (often limited). In
+contrast to experts, the crowd possesses more complete knowledge -- on an aggregated level -- of
+influencers in many domains, such as fashion and fitness. Individual crowd workers, however, only
+possess fragmented knowledge that is often of low-quality. In this paper, we investigate how to
+effectively find social influencers by asking the crowd in the form of open-ended questions. In
+particular, we develop an Expectation-Maximization (EM) learning framework and a variational
+inference algorithm, which are able to infer the true influencers from fragmented crowd
+contributions while learning the reliability of individual crowd workers. Experimental results on
+real-world datasets show that our proposed framework substantially improves the state of the art.
 \end{abstract}
 
 
