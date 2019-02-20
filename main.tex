@@ -35,7 +35,7 @@
 
 \newcommand{\mkh}[1]{\textcolor{red}{(*** MK: #1 ***)}}
 \newcommand{\iar}[1]{\textcolor{blue}{(*** @Ines: #1 ***)}}
-
+\newcommand{\jie}[1]{\textcolor{green}{(*** @Jie: #1 ***)}}
 
 % the following package is optional:
 %\usepackage{latexsym} 
@@ -43,7 +43,7 @@
 
 % Single author syntax
 \author{
-Paper ID: XXXX
+Paper ID: 4876
 %    XI Lab
 %    \affiliations
 %    University of Fribourg, Switzerland\emails
@@ -76,17 +76,7 @@ fourth@example.com
 \maketitle
 
 \begin{abstract}
-Finding social influencers is a fundamental task in many online applications, ranging from brand
-marketing to opinion mining. Existing methods are mainly based on supervised learning techniques,
-whose performance is heavily limited by the availability of expert labels (often limited). Unlike
-experts, the crowd possesses a more broad knowledge -- on an aggregated level -- of
-influencers in many domains, such as fashion and fitness. Individual crowd workers, however, only
-possess fragmented knowledge that is often of low-quality. In this paper, we introduce \sys to
-effectively find social influencers by asking the crowd in the form of open-ended questions. More
-specifically, \sys implements an Expectation-Maximization (EM) learning framework and a variational
-inference algorithm,  to infer the true influencers from fragmented crowd
-contributions while learning the reliability of individual crowd workers. Experimental results on
-real-world datasets show that our proposed framework substantially improves the state of the art.
+Finding social influencers is a fundamental task in many online applications, ranging from brand marketing to opinion mining. Existing methods are mainly based on supervised learning techniques, whose performance is heavily limited by the availability of expert labels (often limited). Unlike experts, the crowd possesses a more broad knowledge -- on an aggregated level -- of influencers in many domains, such as fashion and fitness. Individual crowd workers, however, only possess fragmented knowledge that is often of low-quality. In this paper, we introduce \sys, a new Expectation-Maximization (EM) learning framework, to effectively find social influencers by asking the crowd in the form of open-ended questions. In particular, we derive an efficient variational inference algorithm to infer the true influencers by aggregating fragmented crowd contributions while learning the reliability of individual crowd workers. Experimental results on real-world datasets show that our approach substantially improves the state of the art.
 \end{abstract}
 
 
