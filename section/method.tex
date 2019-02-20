@@ -2,19 +2,11 @@
 \section{The \sys Framework}
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
+\sys is a probabilistic framework that aggregatings open-ended answers while taking into accoutn worker reliability. In this section, we first introduce how we model the hidden class of candidate social influencers and the reliability of workers in \sys, and then introduce the Expectation Maximization method for learning the parameters. Afterwards, we present a Bayesian version of our framework with an efficient variational inference algorithm for characterizing the uncertainty of worker relability. 
 
-We are dealing with a specific type of open-ended questions, where workers are supposed to provide a list of items
-(in our application, items are potential influencers) . 
-Among the provided items, some are of high-quality and some are not. Our goal is to find the items of high-quality. 
-In this section, we introduce our proposed framework that we refer to as
-\sys. We first formalize the problem then we introduce our method for
- measuring the influence of users and the quality of workers. 
- We then describe the overall model that learns from both parameters.
- We extend our model by introducing priors for our measure of worker's quality to
- capture our confidence  on this measure.
+\subsection{Modeling Latent Class and Worker Reliability}
+\jie{NOW HERE}
 
-
-\subsection{Model}
 To infer the quality of an item, our basic assumption is that answers provided by the crowd are not fully reliable. For each worker $j\in \mathcal{J}$, we use $r_j \in [0,1]$ to denote his/her reliability, where $r_j=1$ indicates the worker is fully reliable and $r_j=0$ indicates the worker is not reliable.
 We assume that the item's quality $z_i$ is a random variable that can potentially take two values (i.e., 1 or 0), thus following a Bernoulli distribution:
 \begin{equation}
