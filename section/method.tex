@@ -1,4 +1,8 @@
-\section{Methods}
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The \sys Framework}
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 We are dealing with a specific type of open-ended questions, where workers are supposed to provide a list of items
 (in our application, items are potential influencers) . 
 Among the provided items, some are of high-quality and some are not. Our goal is to find the items of high-quality. 
@@ -8,14 +12,8 @@ In this section, we introduce our proposed framework that we refer to as
  We then describe the overall model that learns from both parameters.
  We extend our model by introducing priors for our measure of worker's quality to
  capture our confidence  on this measure.
-\subsection{Problem Definition}
-\smallskip
-\noindent\textbf{Notations.} Throughout this paper, we use boldface lowercase letters to denote vectors and boldface uppercase letters to denote matrices. For an arbitrary matrix $\mathbf{M}$, we use $\mathbf{M}_{i,j}$ to denote the entry at the $i$-th row and $j$-th column. We use capital letters (e.g., $\mathcal{P}$) in calligraphic math font to denote sets.
 
-We use $\mathcal{I} = \{i_1, \ldots, i_n\}$ to denote the set of items, and  $\mathcal{J} = \{j_1, \ldots, j_m \}$ to denote the set of workers. For each item $i \in \mathcal{I}$, we have its features organized as a vector $\mathbf{x}_i$; and similarly, each worker $j \in \mathcal{J}$ has a feature vector $\mathbf{y}_j$. We use $\mathbf{A}_{i,j}=1$ to denote that item $i$ is an answer provided by worker $j$, and $\mathbf{A}_{i,j}=0$ otherwise. $\mathbf{A}_{i,j}$ is a sparse matrix where only a small proportion of the entries is non-zero. Our goal is find those items in $\mathcal{I}$ that are of high-quality, denoted by $\mathcal{SI} \subset \mathcal{I}$. We use $z_i = 1$ to denote $i\in \mathcal{SI}$, and $z_i = 0$ otherwise.
 
-\smallskip
-\noindent\textbf{Problem Statement.} Given $\mathbf{x}_i$ for each $i\in \mathcal{I}$ and $\mathbf{y}_j$ for each $j\in \mathcal{J}$, and the answer matrix $\mathbf{A}$, our goal is to infer $z_i$ for all $i\in \mathcal{I}$.
 \subsection{Model}
 To infer the quality of an item, our basic assumption is that answers provided by the crowd are not fully reliable. For each worker $j\in \mathcal{J}$, we use $r_j \in [0,1]$ to denote his/her reliability, where $r_j=1$ indicates the worker is fully reliable and $r_j=0$ indicates the worker is not reliable.
 We assume that the item's quality $z_i$ is a random variable that can potentially take two values (i.e., 1 or 0), thus following a Bernoulli distribution:
