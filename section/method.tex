@@ -22,7 +22,7 @@ We then model worker reliability by $r_j \in [0,1]$ $(j\in \mathcal{J})$, where 
     \label{eq:item_worker}
 \end{equation}
 %
-where $\mathbbm{1}(\cdot)$ is an indicator function. Note that the above equation considers a worker to be reliable if she does not name a candidate influencer who turns out not be a not real influencer. It is, however, likely that a worker does not name a candidate influencer $i$ simply becausae she did not thought of $i$. That means, we can only partly treat the non-named candidate influencers as those the worker deemed as non-influencers. It is, therefore, necessary to introduce negative sampling into the inference algorithm, which we introduce in Section~\ref{sec:vi}. 
+where $\mathbbm{1}(\cdot)$ is an indicator function. Note that the above equation considers a worker to be reliable if she does not name a candidate influencer who turns out not be a not real influencer. It is, however, likely that a worker does not name a candidate influencer $i$ simply becausae she did not thought of $i$. That means, we can only partly treat the non-named candidate influencers as those the worker deemed as non-influencers. It is, therefore, necessary to introduce negative sampling into the inference algorithm, which we introduce in Section~\ref{sec:em}. 
 
 Worker reliabity $r_j$ is so far assumed to be a fixed parameter. In practice, we would like to distinguish our \emph{confidence} in estimating the reliabilty of workers providing different numbers of answers: we should be more confident in estimating the reliability of workers who provide 50 answers than those who only provide 5 answers. To quantify the confidence in our inference, we adopt a Bayesian treatment of $r_j$ by introducing a prior:
 %
