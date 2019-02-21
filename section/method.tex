@@ -2,119 +2,122 @@
 \section{The \sys Framework}
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
-\sys is a probabilistic framework that aggregatings open-ended answers while taking into accoutn worker reliability. In this section, we first introduce how we model the hidden class of candidate social influencers and the reliability of workers in \sys, and then introduce the Expectation Maximization method for learning the parameters. Afterwards, we present a Bayesian version of our framework with an efficient variational inference algorithm for characterizing the uncertainty of worker relability. 
+\sys is a probabilistic framework that aggregates open-ended answers while taking into account worker reliability. In this section, we first introduce how \sys models the open-ended question-answering process, and then introduce the Expectation Maximization method for learning the parameters. Afterwards, we present a Bayesian version of our framework with an efficient variational inference algorithm for characterizing the uncertainty of worker relability. 
 
-\subsection{Modeling Latent Class and Worker Reliability}
-\jie{NOW HERE}
-
-To infer the quality of an item, our basic assumption is that answers provided by the crowd are not fully reliable. For each worker $j\in \mathcal{J}$, we use $r_j \in [0,1]$ to denote his/her reliability, where $r_j=1$ indicates the worker is fully reliable and $r_j=0$ indicates the worker is not reliable.
-We assume that the item's quality $z_i$ is a random variable that can potentially take two values (i.e., 1 or 0), thus following a Bernoulli distribution:
+\subsection{\sys as a Generative Model}
+To infer the true label of a candidate social influencer, we adopt a Bayesian network to describe the open-ended question-answering process as a generative process. In this process, the true label of a candidate influencer follows a Bernoulli distribution:
+%
 \begin{equation}
-    z_i \sim Bernoulli(\theta_i)
+    z_i \sim Ber(\theta_i), \theta_i  = \sigma (f^{\mathcal{W}_I}(\mathbf{x}_i)),
     \label{eq:dis_item}
 \end{equation}
+%
+where $\theta_i$ is parameter of distribution predicted by the social features of the candidate influencer through a linear model or a neural network, denoted by $f$; $\mathcal{W}_I$ is the parameter of the model; $\sigma$ is the sigmoid function. Note that $\mathcal{W}_I$ is shared among all candidate influencers, thus amortizing the inference \cite{gershman2014amortized} by exploiting the similarity among candidate influencers. 
 
-We assume that the quality of an item is related to its features. We formalize thus assumption by conditioning the distribution of $z_i$ on its features $x_i$:
+
+We then model worker reliability by $r_j \in [0,1]$ $(j\in \mathcal{J})$, where $r_j=1$ indicates the worker is fully reliable and $r_j=0$ indicates the worker is not reliable. We use  reliability of a worker to define the probability of her named candidate influencer being a true influencer:
+%
 \begin{equation}
-    \theta_i  = \text{sigmoid} (f^{\mathcal{W}_I}(\mathbf{x}_i))
-    \label{eq:item_features}
-\end{equation}
-where $f$ is a neural network, and $\mathcal{W}_I$ is the set of weight parameters of the neural network.
-
-In our problem setting, the worker-item relation is valuable and worth to be exploited as if we know the reliability of the workers who name the item, then we have a better idea of the quality of the item. Similarly, worker reliability
-is also related to which items they provide. For example, if we already know that most of the items a worker provides are of high-quality, then it is likely that this worker is reliable. 
-
-To connect item quality and worker reliability through their naming relation, we assume that the worker reliability is further defined as the probability that the worker's answer is right:
-
-\begin{equation}
-    p(\mathbf{A}_{i,j} = z_i) =  r_j, p(\mathbf{A}_{i,j} \ne z_i) = 1- r_j
-    \label{eq:item_worker_rel}
-\end{equation}
-
-If we consider workers' answers as a generative process, the above equation is equivalent to:
-%we assume that a worker's answer $\mathbf{A}_{i,j}$ is conditioned on both quantities, formalized as below:
-\begin{equation}
-    p(\mathbf{A}_{i,j} | z_i,  r_j) = (1- r_j)^{|z_i-\mathbf{A}_{i,j}|}\times  r_j^{(1-|z_i-\mathbf{A}_{i,j}|)}
+    p(\mathbf{A}_{i,j} | z_i,  r_j) = r_j^{\mathbbm{1}[z_i=\mathbf{A}_{i,j}]} (1- r_j)^{\mathbbm{1}[z_i\ne \mathbf{A}_{i,j}]},
     \label{eq:item_worker}
 \end{equation}
+%
+where $\mathbbm{1}(\cdot)$ is an indicator function. Note that the above equation considers a worker to be reliable if she does not name a candidate influencer who turns out not be a not real influencer. It is, however, likely that a worker does not name a candidate influencer $i$ simply becausae she did not thought of $i$. That means, we can only partly treat the non-named candidate influencers as those the worker deemed as non-influencers. It is, therefore, necessary to introduce negative sampling into the inference algorithm, which we introduce in Section~\ref{sec:vi}. 
 
-\subsection{EM Algorithm for \sys:} 
-The EM algorithm iteratively takes two steps, i.e., the E-step and the
-M-step. In each iteration, the E-step estimates the true labels of items given
-the current parameters; the M-step then updates the estimation of
-the parameters given the newly estimated true labels.
-
-\noindent\textbf{E-step:}
-From the Bayes rule, the item's quality is given by Equation~(\ref{eq:dist_cond}):
-\begin{align}
-    p(z_i|\mathbf{A}_{i,j},r_{j},x_i,\mathcal{W}_I)&=\frac{p(\mathbf{A}_{i,j}|z_i,r_j,x_i,\mathcal{W}_I)\times p(z_i|r_j,x_i,\mathcal{W}_I)}{p(\mathbf{A}_{i,j}|r_j,x_i,\mathcal{W}_I)}\nonumber\\
-        &\propto p(\mathbf{A}_{i,j}|z_i,r_j)\times p(z_i|x_i,\mathcal{W}_I)
-    \label{eq:dist_cond}
-\end{align}
-\iar{small latex problem the equation exceeds the column, I tried splitting the equation but did not look nice
-what do you recommend?}
-We assume workers answers are independent from each other and 
-that item's quality $z_i$ depend only on the reliability of workers $j$ who named the
-item $i$ (i.e, $\mathbf{A}_{i,j}=1$) hence Equation~(\ref{eq:dist_cond})
-could be expressed as in Equation~(\ref{eq:e_step}):
+Worker reliabity $r_j$ is so far assumed to be a fixed parameter. In practice, we would like to distinguish our \emph{confidence} in estimating the reliabilty of workers providing different numbers of answers: we should be more confident in estimating the reliability of workers who provide 50 answers than those who only provide 5 answers. To quantify the confidence in our inference, we adopt a Bayesian treatment of $r_j$ by introducing a prior:
+%
 \begin{equation}
-    p(z_i) \propto \prod_{j \in \mathcal{J},\mathbf{A}_{i,j}=1} p(\mathbf{A}_{i,j}|z_i,r_{j})\times p(z_i|x_i,\mathcal{W}_I)
-    \label{eq:e_step}
+        r_j \sim Beta(A,B).
+        \label{eq:rj_dist}
 \end{equation}
-Therefore, the item's quality is a function of both the worker-item relation and the item's quality with the priors.
-The worker-item relation can be computed as in Equation~(\ref{eq:item_worker}) and the item's quality with 
-the priors can be computed as in Equation~(\ref{eq:item_features}).
+%
+The incorporation of confidence will make our framework more robust to overfitting, as we show in our experiments. 
 
-\noindent\textbf{M-step:}
-Given the item's quality estimated by the E-step, we maximize
-the following likelihood function to estimate the parameters:
+The overall \sys framework is depicted in Figure~\ref{fig:graphical_model}. Model learning concerns parameter learning for $\mathcal{W}_I$ (and $r_j$ when modeled as a fixed parameter) and posterior inference for $z_i$ (and $r_j$ when modeled as a latent variable).  
+
+\begin{figure}[htb] 
+{
+\begin{tikzpicture}
+
+  % Define nodes
+  \node[obs,double]          (a)   {$\mathbf{A}_{i,j}$}; %
+  \node[latent, above left=1.2 of a]  (z)   {$z_i$}; %
+  \node(rect) [latent, dashed, above right=1.2 of a]  (r)   {$r_j$};
+  \node (rect)  [draw,dashed,minimum width=0.5cm,minimum height=0.5cm, above right=1.2 of r] (alpha){$A$};
+  \node (rect)  [draw,dashed,minimum width=0.5cm,minimum height=0.5cm, right=1.2 of r] (beta){$B$};
+
+
+  \node(rect)  [draw,thick,minimum width=0.5cm,minimum height=0.5cm, left=2 of z] (w) {$\mathcal{W}_I$} ; 
+  \node[obs,double, above left=1.2 of z]  (x) {$\mathbf{x}_i$} ; %
+
+
+  % Factors
+  \edge {alpha,beta} {r} ;
+  \edge {w, x} {z} ;
+  \edge {z,r} {a} ;
+
+  \plate {yx} {(a)(r)} {Worker} ;
+  \plate {} {(a)(z) (x) (yx.north west)(yx.south west)} {Candidate Influencer} ;
+
+\end{tikzpicture}
+}
+\caption{Graphical model of \sys. Doubly circled nodes represent observed variables, while single circled nodes represent latent variables.  Squares represent parameters of the model. Note that worker reliability $r_j$ can either be a fixed parameter or a latent variable (thus denoted by a dashed circle). Edges represent conditional relationship in answer generation.}
+\label{fig:graphical_model}
+\end{figure}
+
+
+\subsection{Expectation Maximization for \sys} 
+\label{sec:em}
+For model learning, we first consider the case when worker reliability is modeled as a fixed parameter. Due to the latent variable $z_i$, we use Expectation Maximization (EM) \cite{dempster1977maximum}. Note that the EM method introduced below also serves as the basic for our variational inference method for the case when worker reliability is modeled as a latent variable. The EM method iteratively takes 1) the E-step to infer the posterior distribution over the true label $z_i$ ($i\in \mathcal{I}$) given the current estimates of model parameters, and 2) the M-step to learn the parameter $\mathbf{W}_I$ and $r_j$ ($j\in \mathcal{J}$) given the newly inferred latent variable.
+
+For each worker $j\in \mathcal{J}$, we consider all candidate influencers named by her, and a random sample of candidate influencers she does not name -- obtained by negative sampling, as relevant candidate influencers in estimating her reliability. We denote such worker-relevant candidate influencers as $\mathcal{I}_j$; similary, for each candidate influencer $i$, we denote all relevant workers, including those workers who do not name $i$ yet $i$ is considered relevant by negative sampling, as $\mathcal{J}_i$.
+
+\smallskip
+\noindent\textbf{E-step.} We first denote $\mathbf{A}_{i,\mathcal{J}_i}$ as all relevant answers to candidate influencer $i$, i.e., $\mathbf{A}_{i,\mathcal{J}_i} = \{\mathbf{A}_{i,j}|j \in \mathcal{J}_i\}$. The E-step then infers the true label of a candidate influencer $i$ as follows:
+%
 \begin{align}
-   \mathcal{L}
-    &=\sum_{z_i}p(z_i)\log p(\mathbf{A_{i,j}},z_i|r_j,\mathbf{x}_i,\mathcal{W}_I)\nonumber\\
-    &=\sum_{z_i}p(z_i)\log (p(\mathbf{A}_{i,j}| z_i , r_j) \times p(z_i |\mathbf{x}_i;\mathcal{W}_I)) \nonumber\\
-    &=\sum_{z_i}p(z_i) (\log p(\mathbf{A}_{i,j}| z_i , r_j)+\log p(z_i |\mathbf{x}_i;\mathcal{W}_I)) \nonumber\\
+    p(z_i) & \delequal p(z_i|\mathbf{A}_{i,\mathcal{J}_i},r_{j},x_i,\mathcal{W}_I) \nonumber\\
+        &\propto p(\mathbf{A}_{i,\mathcal{J}_i}|z_i,r_j)\times p(z_i|x_i,\mathcal{W}_I) \label{eq:dist_cond}\\
+        &=\prod_{j \in \mathcal{J}_i} p(\mathbf{A}_{i,j}|z_i,r_{j})\times p(z_i|x_i,\mathcal{W}_I). \nonumber    
+\end{align}
+%
+The inference of $z_i$ is therefore determined by both the reliability of relevant workers' answers and the social features of the candidate influencer $i$. Note $p(\mathbf{A}_{i,j}|z_i,r_{j})$ is defined by Equation~\ref{eq:item_worker} and $p(z_i|x_i,\mathcal{W}_I)$ is defined by Equation~\ref{eq:dis_item}.
+
+\smallskip
+\noindent\textbf{M-step.}
+Given the the true labels of candidate influencers inferred by the E-step, the M-step maximizes the following log-likelihood function to learn the parameters:
+\begin{align}
+   \mathcal{L} 
+    &=\sum_{z_i}p(z_i)\log p(\mathbf{A}_{i,j},z_i|r_j,\mathbf{x}_i,\mathcal{W}_I)\nonumber\\
+    &=\sum_{z_i}p(z_i)\log (p(\mathbf{A}_{i,j}| z_i , r_j) \times p(z_i |\mathbf{x}_i;\mathcal{W}_I)) \label{eq:likelihood_m}\\
     &=\underbrace{\sum_{z_i}p(z_i) \log p(\mathbf{A}_{i,j}| z_i , r_j)}_{\mathcal{M}_1}
-    +\underbrace{\sum_{z_i}p(z_i)\log p(z_i |\mathbf{x}_i;\mathcal{W}_I)}_{\mathcal{M}_2}
-    \label{eq:likelihood_m}
+    +\underbrace{\sum_{z_i}p(z_i)\log p(z_i |\mathbf{x}_i;\mathcal{W}_I)}_{\mathcal{M}_2},
+    \nonumber
 \end{align}
-where $p(z_i)$ is obtained by the E-step (Equation~(\ref{eq:e_step})). With the obtained expression in 
-Equation~(\ref{eq:likelihood_m}), the M-step can be decomposed in two parts independent from each other.
-The first part namely $\mathcal{M}_1$ is solved via a stochastic gradient
-ascent (SGA) method to update $r_j$.
+where $p(z_i)$ is obtained by Equation~\ref{eq:dist_cond}. We observe that the M-step can be decomposed in two parts independent from each other. The first part, $\mathcal{M}_1$, can be solved via stochastic gradient ascent (SGA). The gradient of $r_j$ is given by:
+%
 \begin{equation}
-    r_j=r_j+\eta \frac{\partial \mathcal{T}}{\partial r_j}
-    \label{eq:m_rj}
-\end{equation}
-With $\frac{\partial \mathcal{T}}{\partial r_j}$ is given by Equation~(\ref{eq:grad_rj}):
-\begin{equation}
-    \frac{\partial \mathcal{T}}{\partial r_j}=\frac{p(\mathbf{A}_{i,j}=z_i)}{r_j}-\frac{p(\mathbf{A}_{i,j}\neq z_i)}{1-r_j}
+    \frac{\partial \mathcal{M}_1}{\partial r_j}=\frac{p(\mathbf{A}_{i,j}=z_i)}{r_j}-\frac{p(\mathbf{A}_{i,j}\neq z_i)}{1-r_j}.
     \label{eq:grad_rj}
 \end{equation}
-The second part namely $\mathcal{M}_2$  is exactly the same as the objective function for 
-training a Neural Network, i.e., the opposite of a cross-entropy loss function. 
-It therefore can be optimized using a stochastic gradient descent.
-\iar{please let me know if what is written is correct and/or requires more derivations}
+%
+The second part, $\mathcal{M}_2$, interestingly, is exactly the inverse of the cross-entropy between $p(z_i)$ and $p(z_i |\mathbf{x}_i;\mathcal{W}_I)$, which is widely used as the loss function for many classifiers. $\mathcal{M}_2$ can, therefore, be optimized using standard methods (e.g., back-propagation if a neural network is used by \sys).
 
-\subsection{Modeling Worker Reliability with Priors}
-We have assumed so far a fixed parameter $r_j$ for worker reliability. 
-We would like to extend our model by measuring our confidence in this parameter.
-For example, suppose worker 1 has named 5 real influencers and worker 2 has named 
-3 real influencers and 2 random names. In this case, we should be more confident
-regarding $r_1$ than $r_2$. We proceed by assuming a Beta distribution for $r_j$:
+\subsection{Variational Inference for \sys}
+\label{sec:vi}
+
+We now introduce our variational inference method for the Bayesian version of \sys, i.e., when worker reliability is modeled as a latent variable with a prior distribution. In this case, the closed form solution for EM updates is no longer possible. We develop a meanfield variational approach to approximate the posterior distribution over all hidden variables given the data, which in our model is $p(\mathbf{z},\mathbf{r} | \mathcal{D})$, where $\mathbf{z}$ and $\mathbf{r}$ are the latent true labels for all candidate influencers and reliability of all workers, respectively, and $\mathcal{D}$ is the observed data, i.e., $\{\mathbf{A}, \mathbf{x}_i\forall i\in\mathcal{I}, y_i\forall i\in \mathcal{LI}\}$. 
+
+The main idea of variational inference \cite{tzikas2008variational} is to approximate $p(\mathbf{z},\mathbf{r} | \mathcal{D})$ by a variational distribution $q(\mathbf{z},\mathbf{r})$ and perform optimization to minimize the KL divergence between the two distributions. Meanfield variational inference facilitate efficient optimization by assuming that $q(\mathbf{z},\mathbf{r})$  factorizes over the latent variables:
 \begin{equation}
-		r_j \sim Beta(A_j,B_j)
-		\label{eq:rj_dist}
+    q(\mathbf{z},\mathbf{r})=\prod_{i} q(z_i) \prod_j q(r_j).
+    \label{eq:dist_fact}
 \end{equation}
-With priors on $r_j$, the closed form solution  for EM updates is no longer possible.
-We develop a meanfield variational approach to approximate the posterior distribution 
-$p(z,r)$ over all hidden variables. 
-The main idea in the variational EM framework \cite{bayes2008variational} is to approximate $p(z,r)$ 
-by a variational distribution $q(z,r)$ and to assume that it factorizes over
-the latent variables $z$ and $r$ as expressed in Equation~(\ref{eq:dist_fact}).
-\begin{equation}
-	q(z,r)=\prod_{i} q(z_i) \prod_j q(r_j)
-	\label{eq:dist_fact}
-\end{equation}
+
+\jie{NOW HERE}
+
+
+
 
 We further assume the forms of the factor functions q:
 \begin{align}

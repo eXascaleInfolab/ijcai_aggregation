@@ -23,13 +23,20 @@
 \usepackage{algorithm}
 \usepackage{algorithmic}
 \usepackage{amsmath, amsthm, amssymb}
+\usepackage{bbm}
 \urlstyle{same}
 \usepackage[T1]{fontenc}
 \usepackage{colortbl}
 \usepackage{amsmath}
 \usepackage{url}
 \usepackage{xspace}
+\usepackage{tikz}
+\usetikzlibrary{bayesnet}
+\newcommand{\argmax}[1]{\underset{#1}{\operatorname{arg}\,\operatorname{max}}\;}
 \usepackage[algo2e,titlenotnumbered,boxed,ruled,vlined,linesnumbered]{algorithm2e}
+\usepackage{stackengine}
+\def\delequal{\mathrel{\ensurestackMath{\stackon[1pt]{=}{\scriptstyle\Delta}}}}
+
 \newcommand{\sys}{OpenCrowd\xspace}
 
 
