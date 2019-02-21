@@ -186,7 +186,7 @@ Therefore, $r_j$ can be efficiently inferred as follow:
 
 
 The update rules described above plays the role of the E-step in a variational EM approach. 
-The M-step for learning $\mathbf{W}_I$ can be performed in a similar manner as in the previous section. The overall coordinate ascent algorithm is presented in Algorithm~\ref{alg:vi-algo}. It iterates over the E-step and M-step until the evidence lower bound (ELBO) \cite{blei2017variational} -- as an approximate to the KL-divergence -- converges. We note that this algorithm has a similar computational complexity with the normal EM method: both Equations~\ref{eq:qzi} and \ref{eq:qrj} can be efficiently computed; and $\mathbf{W}_I$ can be efficiently updated in an incremental manner, i.e., learn for a few more epochs starting from the parameter learned in the previous iteration.
+The M-step for learning $\mathbf{W}_I$ can be performed in a similar manner as in the previous section. The overall coordinate ascent algorithm is presented in Algorithm~\ref{alg:vi-algo}. It iterates over the E-step and M-step until the evidence lower bound (ELBO) \cite{blei2017variational} -- equivalent to the KL-divergence as the optimization objective yet easily computable -- converges. We note that this algorithm has a similar computational complexity with the normal EM method: both Equations~\ref{eq:qzi} and \ref{eq:qrj} can be efficiently computed; and $\mathbf{W}_I$ can be efficiently updated in an incremental manner, i.e., learn for a few more epochs starting from the parameter learned in the previous iteration.
 
 \begin{algorithm2e}
     \SetKwInOut{Input}{Input}
