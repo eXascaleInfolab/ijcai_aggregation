@@ -106,68 +106,111 @@ The second part, $\mathcal{M}_2$, interestingly, is exactly the inverse of the c
 \subsection{Variational Inference for \sys}
 \label{sec:vi}
 
-We now introduce our variational inference method for the Bayesian version of \sys, i.e., when worker reliability is modeled as a latent variable with a prior distribution. In this case, the closed form solution for EM updates is no longer possible. We develop a meanfield variational approach to approximate the posterior distribution over all hidden variables given the data, which in our model is $p(\mathbf{z},\mathbf{r} | \mathcal{D})$, where $\mathbf{z}$ and $\mathbf{r}$ are the latent true labels for all candidate influencers and reliability of all workers, respectively, and $\mathcal{D}$ is the observed data, i.e., $\{\mathbf{A}, \mathbf{x}_i\forall i\in\mathcal{I}, y_i\forall i\in \mathcal{LI}\}$. 
+We now introduce our variational inference method for the Bayesian version of \sys, i.e., when worker reliability is modeled as a latent variable with a prior distribution. In this case, the closed form solution for EM updates is no longer possible. We develop a meanfield variational approach to approximate the posterior distribution over all hidden variables given the data, which in our model is $p(\mathbf{z},\mathbf{r} | \mathcal{D})$, where $\mathbf{z}$ and $\mathbf{r}$ are the latent true labels for all candidate influencers and reliability of all workers, respectively, and $\mathcal{D}$ is the observed data, i.e., $\{\mathbf{A}, \mathbf{x}_i\ (\forall i\in\mathcal{I}), y_i\ (\forall i\in \mathcal{LI})\}$. 
 
 The main idea of variational inference \cite{tzikas2008variational} is to approximate $p(\mathbf{z},\mathbf{r} | \mathcal{D})$ by a variational distribution $q(\mathbf{z},\mathbf{r})$ and perform optimization to minimize the KL divergence between the two distributions. Meanfield variational inference facilitate efficient optimization by assuming that $q(\mathbf{z},\mathbf{r})$  factorizes over the latent variables:
 \begin{equation}
     q(\mathbf{z},\mathbf{r})=\prod_{i} q(z_i) \prod_j q(r_j).
     \label{eq:dist_fact}
 \end{equation}
-
-\jie{NOW HERE}
-
-
-
-
-We further assume the forms of the factor functions q:
+%
+We further assume the forms of the factor functions:
 \begin{align}
-	q(z_i)=Bernoulli(\phi_i) \\
-	q(r_j)=Beta(\alpha_j,\beta_j)
+    q(z_i)=Ber(\phi_i), q(r_j)=Beta(\alpha_j,\beta_j),
 \end{align}
-where $\phi_i$, $\alpha_j$ and $\beta_j$ are variational parameters
-used to perform optimization to minimize the KL-divergence $\mathbf{KL}(q||P)$, 
-making q ‘close’ to p.
+%
+where $\phi_i$, $\alpha_j$ and $\beta_j$ are variational parameters used to perform optimization to minimize the KL-divergence. This optimization problem can be solved via coordinate ascent \cite{blei2017variational}: updating one factor while keeping all others fixed and iterate until convergence. In the following, we derive the update equations for latent variables $z_i$ ($i\in\mathcal{I}$) and $r_j$ ($j\in\mathcal{J}$).
 
-We can derive the update equations as follows:
-For $z_i$, we have:
+\smallskip
+\noindent\textbf{Updating $z_i$.} For $z_i$, we have:
+%
+\begin{equation}
+q(z_i)    \propto \prod_{j \in \mathcal{J}_{i}} \exp{\{\mathbb{E}_{q(r_j)}[\log (P(\mathbf{A}_{i,j}|z_i,r_j))]\}}   \times P(z_i|x_i, \mathcal{W}_I). \\
+\end{equation}
+%
+We distinguish among the two cases:
+%
 \begin{align}
-    q(z_i=0)    &\propto \prod_{j \in \mathcal{T}_{i}} \exp{\{\mathbb{E}_{q(r_j)}[\log (P(\mathbf{A}_{i,j}|z_i=0,r_j))]\}}				\nonumber \\ &\times P(z_i=0|x_i, \mathcal{W}_I)  \nonumber \\
-                &\propto \prod_{j \in \mathcal{T}_{i}} \exp{\{\mathbb{E}_{q(r_j)}[\log (1-r_j)]\}}\times (1-\theta_i) \nonumber \\
-    q(z_i=1)    &\propto \prod_{j \in \mathcal{T}_{i}} \exp{\{\mathbb{E}_{q(r_j)}[\log (P(\mathbf{A}_{i,j}|z_i=1,r_j))]\}}\nonumber \\ &\times P(z_i=1|x_i, \mathcal{W}_I)   \nonumber \\
-                &\propto \prod_{j \in \mathcal{T}_{i}} \exp{\{\mathbb{E}_{q(r_j)}[\log (r_j)]\}}\times \theta_i 
+    q(z_i=0)   &= \prod_{j \in \mathcal{J}_{i}} \exp{\{\mathbb{E}_{q(r_j)}[\log (1-r_j)]\}}\times (1-\theta_i) \nonumber, \\
+    q(z_i=1)   &= \prod_{j \in \mathcal{J}_{i}} \exp{\{\mathbb{E}_{q(r_j)}[\log (r_j)]\}}\times \theta_i .
 \label{eq:q_two_poss}                
 \end{align}
-
-The expectations in Equations~(\ref{eq:q_two_poss}) can be evaluated as described in Equations~(\ref{eq:expect}):
+%
+The expectations can be evaluated as follows:
 \begin{align}
-    \mathbb{E}_{q(r_j)}[\log (1-r_j)]&= \Psi(\beta_j)-\Psi(\alpha_j+\beta_j) \nonumber \\
-    \mathbb{E}_{q(r_j)}[\log (r_j)]&= \Psi(\alpha_j)-\Psi(\alpha_j+\beta_j)
+    \mathbb{E}_{q(r_j)}[\log (1-r_j)]&= \Psi(\beta_j)-\Psi(\alpha_j+\beta_j), \nonumber \\
+    \mathbb{E}_{q(r_j)}[\log (r_j)]&= \Psi(\alpha_j)-\Psi(\alpha_j+\beta_j),
     \label{eq:expect}
 \end{align}
-Therefore, the expressions in Equations~(\ref{eq:q_two_poss}) can be simplified to the following Equations~(\ref{eq:qzi}):
+where $\Psi(\cdot)$ is the Digamma function. Therefore, the update equation for $z_i$ can be simplified as:
 \begin{align}
-    q(z_i=0)   &\propto \prod_{j \in \mathcal{T}_{i}} \exp{\{\Psi(\beta_j)-\Psi(\alpha_j+\beta_j)\}}\times (1-\theta_i) \nonumber \\  
-     q(z_i=1)    &\propto \prod_{j \in \mathcal{T}_{i}} \exp{\{ \Psi(\alpha_j)-\Psi(\alpha_j+\beta_j)\}}\times \theta_i  
+    q(z_i=0)   &\propto \prod_{j \in \mathcal{J}_{i}} \exp{\{\Psi(\beta_j)-\Psi(\alpha_j+\beta_j)\}}\times (1-\theta_i), \nonumber \\  
+     q(z_i=1)    &\propto \prod_{j \in \mathcal{J}_{i}} \exp{\{ \Psi(\alpha_j)-\Psi(\alpha_j+\beta_j)\}}\times \theta_i  .
      \label{eq:qzi}
 \end{align}
 
-We move now to the variational update for the worker's reliability $r_j$:
+\smallskip
+\noindent\textbf{Updating $r_j$.}  For $r_j$, we have:
+%
 \begin{equation}
-    q(r_j) \propto \prod_{i} \exp{\{\mathbb{E}_{q(z_i)}[\log{P(\mathbf{A}_{i,j}|r_j,z_i)}]\}} \times   {P(r_j|x_j,\mathcal{W}_J)}
+    q(r_j) \propto \prod_{i \in \mathcal{I}_j} \exp{\{\mathbb{E}_{q(z_i)}[\log{P(\mathbf{A}_{i,j}|r_j,z_i)}]\}} \times   {P(r_j|x_j,\mathcal{W}_J)}
 \end{equation}
-We distinguish two main cases:
-\begin{itemize}
-\item if $\mathbf{A}_{i,j}=1$:
-\begin{equation}
-  q(r_j)  \propto Beta(\alpha_j+\sum_{i,\mathbf{A}_{i,j}=1}  \theta_i,\beta_j+ \sum_{i,\mathbf{A}_{i,j}=1} (1 - \theta_i) )
-  \label{eq:rj_aij_1}
-\end{equation}
-\item if $\mathbf{A}_{i,j}=0$:
-\begin{equation}
- q(r_j)  \propto Beta(\alpha_j+\sum_{i,\mathbf{A}_{i,j}=0} (1 - \theta_i),\beta_j+ \sum_{i,\mathbf{A}_{i,j}=0} \theta_i)
-   \label{eq:rj_aij_0}
-\end{equation}
-\end{itemize}
+%
+The expectation can be evaluated as follows
+%
+\begin{align}  
+& \exp{\{\mathbb{E}_{q(z_i)}[\log{P(\mathbf{A}_{i,j}|r_j,z_i)}]\}} = \nonumber \\
+& 
+\left\{  
+    \begin{array}{lr}
+        r_j^{\theta_i}  \times (1-r_j)^{(1 - \theta_i)}, &  \text{if\ } \mathbf{A}_{i,j}=1\\  
+        r_j^{(1 - \theta_i)}  \times (1-r_j)^{\theta_i}, &  \text{if\ } \mathbf{A}_{i,j}=0   
+    \end{array}  
+\right.  
+\end{align}
+%
+Therefore, $r_j$ can be efficiently inferred as follow:
+%
+\begin{align}  
+& q(r_j)  \propto \nonumber \\
+& 
+\left\{  
+    \begin{array}{lr}
+        Beta(\alpha_j+\sum_{i\in \mathcal{I}_j}  \theta_i,\beta_j+ \sum_{i\in \mathcal{I}_j} (1 - \theta_i) ), &  \text{if\ } \mathbf{A}_{i,j}=1\\  
+        Beta(\alpha_j+\sum_{i\in \mathcal{I}_j} (1 - \theta_i),\beta_j+ \sum_{i\in \mathcal{I}_j} \theta_i), &  \text{if\ } \mathbf{A}_{i,j}=0   
+    \end{array}  
+\right.  
+\label{eq:qrj}
+\end{align}
+
+
+
 The update rules described above plays the role of the E-step in a variational EM approach. 
-The M-step can be performed in a similar manner as in the previous section for $z_i$.
-\iar{how to describe what we are doing with r here?}
+The M-step for learning $\mathbf{W}_I$ can be performed in a similar manner as in the previous section. The overall coordinate ascent algorithm is presented in Algorithm~\ref{alg:vi-algo}. It iterates over the E-step and M-step until the evidence lower bound (ELBO) \cite{blei2017variational} -- as an approximate to the KL-divergence -- converges. We note that this algorithm has a similar computational complexity with the normal EM method: both Equations~\ref{eq:qzi} and \ref{eq:qrj} can be efficiently computed; and $\mathbf{W}_I$ can be efficiently updated in an incremental manner, i.e., learn for a few more epochs starting from the parameter learned in the previous iteration.
+
+\begin{algorithm2e}
+    \SetKwInOut{Input}{Input}
+    \SetKwInOut{Output}{Output}
+    \SetKwInOut{Initialize}{Initialize}
+    \Input{$\mathbf{A}, \mathbf{x}_i\ (\forall i\in\mathcal{I}), y_i\ (\forall i\in \mathcal{LI})$}
+    \Output{Variational distributions: $q(z_i)$ ($i\in \mathcal{I}$) and $q(r_j)$ ($j\in \mathcal{J}$)}
+    \Initialize {Variational parameters: $\theta_i$, $\alpha_j=A$, $\beta_j=B$; parameter of the influencer predictor ($f$): $\mathbf{W}_I$}
+    \While{the ELBO has not converged}{
+    E-step:\\
+        \For {$i \in \mathcal{I}$}
+        {
+                update $q(z_i)$ by Equation~\ref{eq:qzi}\;
+        } 
+        \For {$j \in \mathcal{J}$}
+        {
+                update $q(r_j)$ by Equation~\ref{eq:qrj}\;
+        }
+       M-step: \\
+        \For {$i \in \mathcal{I}$}
+        {
+         Update $\mathcal{W}_I$ via standard gradient descent\;
+       } 
+    }
+    \caption{Coordinate Ascent Variational Inference}
+    \label{alg:vi-algo}
+\end{algorithm2e}
