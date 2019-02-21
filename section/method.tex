@@ -153,10 +153,10 @@ where $\Psi(\cdot)$ is the Digamma function. Therefore, the update equation for 
 \noindent\textbf{Updating $r_j$.}  For $r_j$, we have:
 %
 \begin{equation}
-    q(r_j) \propto \prod_{i \in \mathcal{I}_j} \exp{\{\mathbb{E}_{q(z_i)}[\log{P(\mathbf{A}_{i,j}|r_j,z_i)}]\}} \times   {P(r_j|x_j,\mathcal{W}_J)}
+    q(r_j) \propto \prod_{i \in \mathcal{I}_j} \exp{\{\mathbb{E}_{q(z_i)}[\log{P(\mathbf{A}_{i,j}|r_j,z_i)}]\}} \times   {P(r_j)}
 \end{equation}
 %
-The expectation can be evaluated as follows
+where $P(r_j)$ is the variational $r_j$ distribution from last iteration. The expectation can be evaluated as follows
 %
 \begin{align}  
 & \exp{\{\mathbb{E}_{q(z_i)}[\log{P(\mathbf{A}_{i,j}|r_j,z_i)}]\}} = \nonumber \\
