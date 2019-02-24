@@ -2,7 +2,7 @@
 \section{The \sys Framework}
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
-\sys is a probabilistic framework that aggregates open-ended answers while taking into account worker reliability. In this section, we first introduce how \sys models the open-ended question-answering process, and then introduce the Expectation Maximization method for learning the parameters. Afterwards, we present a Bayesian version of our framework with an efficient variational inference algorithm for characterizing the uncertainty of worker relability. 
+\sys is a probabilistic framework that aggregates open-ended answers while taking into account worker reliability. In this section, we first introduce how \sys models the open-ended question-answering process, and then introduce the Expectation Maximization method for learning the parameters. Subsequently, we present a Bayesian version of our framework with an efficient variational inference algorithm for characterizing the uncertainty of worker relability. 
 
 \subsection{\sys as a Generative Model}
 To infer the true label of a candidate social influencer, we adopt a Bayesian network to describe the open-ended question-answering process as a generative process. In this process, the true label of a candidate influencer follows a Bernoulli distribution:
@@ -12,19 +12,19 @@ To infer the true label of a candidate social influencer, we adopt a Bayesian ne
     \label{eq:dis_item}
 \end{equation}
 %
-where $\theta_i$ is parameter of distribution predicted by the social features of the candidate influencer through a linear model or a neural network, denoted by $f$; $\mathcal{W}_I$ is the parameter of the model; $\sigma$ is the sigmoid function. Note that $\mathcal{W}_I$ is shared among all candidate influencers, thus amortizing the inference \cite{gershman2014amortized} by exploiting the similarity among candidate influencers. 
+where $\theta_i$ is the parameter of the distribution predicted by the social features of the candidate influencer through a linear model or a neural network, denoted by $f$; $\mathcal{W}_I$ is the parameter of the model; $\sigma$ is the sigmoid function. Note that $\mathcal{W}_I$ is shared among all candidate influencers, thus amortizing the inference \cite{gershman2014amortized} by exploiting the similarity among candidate influencers. 
 
 
-We then model worker reliability by $r_j \in [0,1]$ $(j\in \mathcal{J})$, where $r_j=1$ indicates the worker is fully reliable and $r_j=0$ indicates the worker is not reliable. We use  reliability of a worker to define the probability of her named candidate influencer being a true influencer:
+We then model worker reliability by $r_j \in [0,1]$ $(j\in \mathcal{J})$, where $r_j=1$ indicates the worker is fully reliable and $r_j=0$ indicates the worker is not reliable. We use the reliability of a worker to define the probability of her named candidate influencer being a true influencer:
 %
 \begin{equation}
     p(\mathbf{A}_{i,j} | z_i,  r_j) = r_j^{\mathbbm{1}[z_i=\mathbf{A}_{i,j}]} (1- r_j)^{\mathbbm{1}[z_i\ne \mathbf{A}_{i,j}]},
     \label{eq:item_worker}
 \end{equation}
 %
-where $\mathbbm{1}(\cdot)$ is an indicator function. Note that the above equation considers a worker to be reliable if she does not name a candidate influencer who turns out not be a not real influencer. It is, however, likely that a worker does not name a candidate influencer $i$ simply becausae she did not thought of $i$. That means, we can only partly treat the non-named candidate influencers as those the worker deemed as non-influencers. It is, therefore, necessary to introduce negative sampling into the inference algorithm, which we introduce in Section~\ref{sec:em}. 
+where $\mathbbm{1}(\cdot)$ is an indicator function. Note that the above equation considers a worker to be reliable if she does not name a candidate influencer who turns out not be a not real influencer. It is, however, likely that a worker does not name a candidate influencer $i$ simply because she did not think of $i$. That means that we can only partly treat the non-named candidate influencers as those the worker considers as non-influencers. It is, therefore, necessary to introduce negative sampling into the inference algorithm, which we introduce in Section~\ref{sec:em}. 
 
-Worker reliabity $r_j$ is so far assumed to be a fixed parameter. In practice, we would like to distinguish our \emph{confidence} in estimating the reliabilty of workers providing different numbers of answers: we should be more confident in estimating the reliability of workers who provide 50 answers than those who only provide 5 answers. To quantify the confidence in our inference, we adopt a Bayesian treatment of $r_j$ by introducing a prior:
+Worker reliability $r_j$ is so far assumed to be a fixed parameter. In practice, we would like to distinguish our \emph{confidence} in estimating the reliability of the workers providing different numbers of answers: we should be more confident in estimating the reliability of workers who provide 50 answers than those who only provide 5 answers. To quantify the confidence in our inference, we adopt a Bayesian treatment of $r_j$ by introducing a prior:
 %
 \begin{equation}
         r_j \sim Beta(A,B).
@@ -61,16 +61,16 @@ The overall \sys framework is depicted in Figure~\ref{fig:graphical_model}. Mode
 
 \end{tikzpicture}
 }
-\caption{Graphical model of \sys. Doubly circled nodes represent observed variables, while single circled nodes represent latent variables.  Squares represent parameters of the model. Note that worker reliability $r_j$ can either be a fixed parameter or a latent variable (thus denoted by a dashed circle). Edges represent conditional relationship in answer generation.}
+\caption{Graphical model of \sys. Double (greyed) circles represent observed variables, while single circles represent latent variables.  Squares represent model parameters. We note that worker reliability $r_j$ can either be a fixed parameter or a latent variable (thus, it is denoted by a dashed circle in the figure). Edges represent conditional relationship in answer generation.}
 \label{fig:graphical_model}
 \end{figure}
 
 
 \subsection{Expectation Maximization for \sys} 
 \label{sec:em}
-For model learning, we first consider the case when worker reliability is modeled as a fixed parameter. Due to the latent variable $z_i$, we use Expectation Maximization (EM) \cite{dempster1977maximum}. Note that the EM method introduced below also serves as the basic for our variational inference method for the case when worker reliability is modeled as a latent variable. The EM method iteratively takes 1) the E-step to infer the posterior distribution over the true label $z_i$ ($i\in \mathcal{I}$) given the current estimates of model parameters, and 2) the M-step to learn the parameter $\mathbf{W}_I$ and $r_j$ ($j\in \mathcal{J}$) given the newly inferred latent variable.
+For model learning, we first consider the case when worker reliability is modeled as a fixed parameter. Due to the latent variable $z_i$, we use Expectation Maximization (EM) \cite{dempster1977maximum}. Note that the EM method introduced below also serves as the basis for our variational inference method for the case when worker reliability is modeled as a latent variable. The EM method iteratively takes 1) the E-step to infer the posterior distribution over the true label $z_i$ ($i\in \mathcal{I}$) given the current estimates of model parameters, and 2) the M-step to learn the parameter $\mathbf{W}_I$ and $r_j$ ($j\in \mathcal{J}$) given the newly inferred latent variable.
 
-For each worker $j\in \mathcal{J}$, we consider all candidate influencers named by her, and a random sample of candidate influencers she does not name -- obtained by negative sampling, as relevant candidate influencers in estimating her reliability. We denote such worker-relevant candidate influencers as $\mathcal{I}_j$; similary, for each candidate influencer $i$, we denote all relevant workers, including those workers who do not name $i$ yet $i$ is considered relevant by negative sampling, as $\mathcal{J}_i$.
+For each worker $j\in \mathcal{J}$, we consider all candidate influencers named by her, and a random sample of candidate influencers she does not name -- obtained by negative sampling, as relevant candidate influencers in estimating her reliability. We denote such worker-relevant candidate influencers as $\mathcal{I}_j$; similarly, for each candidate influencer $i$, we denote all relevant workers, including those workers who do not name $i$ yet $i$ \pcm{? I couldn't understand this} is considered relevant by negative sampling, as $\mathcal{J}_i$.
 
 \smallskip
 \noindent\textbf{E-step.} We first denote $\mathbf{A}_{i,\mathcal{J}_i}$ as all relevant answers to candidate influencer $i$, i.e., $\mathbf{A}_{i,\mathcal{J}_i} = \{\mathbf{A}_{i,j}|j \in \mathcal{J}_i\}$. The E-step then infers the true label of a candidate influencer $i$ as follows:
@@ -81,7 +81,7 @@ For each worker $j\in \mathcal{J}$, we consider all candidate influencers named 
         &=\prod_{j \in \mathcal{J}_i} p(\mathbf{A}_{i,j}|z_i,r_{j})\times p(z_i|x_i,\mathcal{W}_I). \nonumber    
 \end{align}
 %
-The inference of $z_i$ is therefore determined by both the reliability of relevant workers' answers and the social features of the candidate influencer $i$. Note $p(\mathbf{A}_{i,j}|z_i,r_{j})$ is defined by Equation~\ref{eq:item_worker} and $p(z_i|x_i,\mathcal{W}_I)$ is defined by Equation~\ref{eq:dis_item}.
+The inference of $z_i$ is therefore determined by both the reliability of the relevant workers' answers and the social features of the candidate influencer $i$. Note that $p(\mathbf{A}_{i,j}|z_i,r_{j})$ is defined by Equation~\ref{eq:item_worker} and $p(z_i|x_i,\mathcal{W}_I)$ is defined by Equation~\ref{eq:dis_item}.
 
 \smallskip
 \noindent\textbf{M-step.}
@@ -94,7 +94,7 @@ Given the the true labels of candidate influencers inferred by the E-step, the M
     +\underbrace{\sum_{z_i}p(z_i)\log p(z_i |\mathbf{x}_i;\mathcal{W}_I)}_{\mathcal{M}_2},
     \nonumber
 \end{align}
-where $p(z_i)$ is obtained by Equation~\ref{eq:dist_cond}. We observe that the M-step can be decomposed in two parts independent from each other. The first part, $\mathcal{M}_1$, can be solved via stochastic gradient ascent (SGA). The gradient of $r_j$ is given by:
+where $p(z_i)$ is obtained by Equation~\ref{eq:dist_cond}. We observe that the M-step can be decomposed in two parts independent of each other. The first part, $\mathcal{M}_1$, can be solved via stochastic gradient ascent (SGA). The gradient of $r_j$ is given by:
 %
 \begin{equation}
     \frac{\partial \mathcal{M}_1}{\partial r_j}=\frac{p(\mathbf{A}_{i,j}=z_i)}{r_j}-\frac{p(\mathbf{A}_{i,j}\neq z_i)}{1-r_j}.
@@ -106,9 +106,9 @@ The second part, $\mathcal{M}_2$, interestingly, is exactly the inverse of the c
 \subsection{Variational Inference for \sys}
 \label{sec:vi}
 
-We now introduce our variational inference method for the Bayesian version of \sys, i.e., when worker reliability is modeled as a latent variable with a prior distribution. In this case, the closed form solution for EM updates is no longer possible. We develop a meanfield variational approach to approximate the posterior distribution over all hidden variables given the data, which in our model is $p(\mathbf{z},\mathbf{r} | \mathcal{D})$, where $\mathbf{z}$ and $\mathbf{r}$ are the latent true labels for all candidate influencers and reliability of all workers, respectively, and $\mathcal{D}$ is the observed data, i.e., $\{\mathbf{A}, \mathbf{x}_i\ (\forall i\in\mathcal{I}), y_i\ (\forall i\in \mathcal{LI})\}$. 
+We now introduce our variational inference method for the Bayesian version of \sys, i.e., when worker reliability is modeled as a latent variable with a prior distribution. In this case, a closed form solution for the EM updates is no longer possible. We develop a meanfield variational approach to approximate the posterior distribution over all hidden variables given the data, which in our model is $p(\mathbf{z},\mathbf{r} | \mathcal{D})$, where $\mathbf{z}$ and $\mathbf{r}$ are the latent true labels for all candidate influencers and for the reliability of all workers, respectively, and $\mathcal{D}$ is the observed data, i.e., $\{\mathbf{A}, \mathbf{x}_i\ (\forall i\in\mathcal{I}), y_i\ (\forall i\in \mathcal{LI})\}$. 
 
-The main idea of variational inference \cite{tzikas2008variational} is to approximate $p(\mathbf{z},\mathbf{r} | \mathcal{D})$ by a variational distribution $q(\mathbf{z},\mathbf{r})$ and perform optimization to minimize the KL divergence between the two distributions. Meanfield variational inference facilitate efficient optimization by assuming that $q(\mathbf{z},\mathbf{r})$  factorizes over the latent variables:
+The main idea of variational inference \cite{tzikas2008variational} is to approximate $p(\mathbf{z},\mathbf{r} | \mathcal{D})$ by a variational distribution $q(\mathbf{z},\mathbf{r})$ and perform optimization to minimize the KL divergence between the two distributions. Meanfield variational inference allows for efficient optimization by assuming that $q(\mathbf{z},\mathbf{r})$ factorizes over the latent variables:
 \begin{equation}
     q(\mathbf{z},\mathbf{r})=\prod_{i} q(z_i) \prod_j q(r_j).
     \label{eq:dist_fact}
@@ -119,7 +119,7 @@ We further assume the forms of the factor functions:
     q(z_i)=Ber(\phi_i), q(r_j)=Beta(\alpha_j,\beta_j),
 \end{align}
 %
-where $\phi_i$, $\alpha_j$ and $\beta_j$ are variational parameters used to perform optimization to minimize the KL-divergence. This optimization problem can be solved via coordinate ascent \cite{blei2017variational}: updating one factor while keeping all others fixed and iterate until convergence. In the following, we derive the update equations for latent variables $z_i$ ($i\in\mathcal{I}$) and $r_j$ ($j\in\mathcal{J}$).
+where $\phi_i$, $\alpha_j$ and $\beta_j$ are variational parameters used to perform optimization to minimize the KL-divergence. This optimization problem can be solved via coordinate ascent \cite{blei2017variational}: updating one factor while keeping all others fixed and iterating until convergence. In the following, we derive the update equations for the latent variables $z_i$ ($i\in\mathcal{I}$) and $r_j$ ($j\in\mathcal{J}$).
 
 \smallskip
 \noindent\textbf{Updating $z_i$.} For $z_i$, we have:
@@ -128,7 +128,7 @@ where $\phi_i$, $\alpha_j$ and $\beta_j$ are variational parameters used to perf
 q(z_i)    \propto \prod_{j \in \mathcal{J}_{i}} \exp{\{\mathbb{E}_{q(r_j)}[\log (P(\mathbf{A}_{i,j}|z_i,r_j))]\}}   \times P(z_i|x_i, \mathcal{W}_I). \\
 \end{equation}
 %
-We distinguish between the two cases:
+We distinguish between two cases:
 %
 \begin{align}
     q(z_i=0)   &= \prod_{j \in \mathcal{J}_{i}} \exp{\{\mathbb{E}_{q(r_j)}[\log (1-r_j)]\}}\times (1-\theta_i) \nonumber, \\
@@ -156,7 +156,7 @@ where $\Psi(\cdot)$ is the Digamma function. Therefore, the update equation for 
     q(r_j) \propto \prod_{i \in \mathcal{I}_j} \exp{\{\mathbb{E}_{q(z_i)}[\log{P(\mathbf{A}_{i,j}|r_j,z_i)}]\}} \times   {P(r_j)}
 \end{equation}
 %
-where $P(r_j)$ is the variational $r_j$ distribution from last iteration. The expectation can be evaluated as follows
+where $P(r_j)$ is the variational $r_j$ distribution from last iteration. The expectation can be evaluated as follows:
 %
 \begin{align}  
 & \exp{\{\mathbb{E}_{q(z_i)}[\log{P(\mathbf{A}_{i,j}|r_j,z_i)}]\}} = \nonumber \\
@@ -185,8 +185,8 @@ Therefore, $r_j$ can be efficiently inferred as follow:
 
 
 
-The update rules described above plays the role of the E-step in a variational EM approach. 
-The M-step for learning $\mathbf{W}_I$ can be performed in a similar manner as in the previous section. The overall coordinate ascent algorithm is presented in Algorithm~\ref{alg:vi-algo}. It iterates over the E-step and M-step until the evidence lower bound (ELBO) \cite{blei2017variational} -- equivalent to the KL-divergence as the optimization objective yet easily computable -- converges. We note that this algorithm has a similar computational complexity with the normal EM method: both Equations~\ref{eq:qzi} and \ref{eq:qrj} can be efficiently computed; and $\mathbf{W}_I$ can be efficiently updated in an incremental manner, i.e., learn for a few more epochs starting from the parameter learned in the previous iteration.
+The update rules described above play the role of the E-step in a variational EM approach. 
+The M-step for learning $\mathbf{W}_I$ can be performed in a similar manner as in the previous section. The overall coordinate ascent algorithm is presented in Algorithm~\ref{alg:vi-algo}. It iterates over the E-step and M-step until the evidence lower bound (ELBO) \cite{blei2017variational} -- equivalent to the KL-divergence as the optimization objective yet easily computable -- converges. We note that this algorithm has a similar computational complexity as the normal EM method: both Equations~\ref{eq:qzi} and \ref{eq:qrj} can be efficiently computed; and $\mathbf{W}_I$ can be efficiently updated in an incremental manner, i.e., it can learn for a few more epochs starting from the parameter learned in the previous iteration.
 
 \begin{algorithm2e}
     \SetKwInOut{Input}{Input}
