@@ -2,18 +2,18 @@
 \section{Problem Formulation}
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
-In this section, we first introduce the notations used in the paper and then formally define the open-ended answer aggregation problem.
+In this section, we first introduce the notations used in the paper and then formally define the open-ended answers aggregation problem.
 
 \smallskip
 \noindent\textbf{Notations.} Throughout this paper, we use boldface lowercase letters to denote vectors and boldface uppercase letters to denote matrices. For an arbitrary matrix $\mathbf{M}$, we use $\mathbf{M}_{i,j}$ to denote the entry at the $i$-th row and $j$-th column. We use capital letters (e.g., $\mathcal{P}$) in calligraphic math font to denote sets.
 
-We use $\mathcal{I}$ to denote the set of unique \emph{candidate} social influencers named by workers, and $\mathcal{J}$ to denote the set of workers. We use $\mathbf{A}_{i,j}=1$ to denote that the candidate influencer $i$ is an answer provided by worker $j$, and $\mathbf{A}_{i,j}=0$ otherwise. Note that $\mathbf{A}_{i,j}$ is a sparse matrix where only a small proportion of the entries is non-zero. 
-For each candidate influencer $i \in \mathcal{I}$, we collect her social features, such as number of followers, number of tweets, and the content of her tweets, and denote the feature vector by $\mathbf{x}_i$. For a subset of $\mathcal{I}$, denoted as $\mathcal{LI}\subset \mathcal{I}$, we are given an expert label $y_i$ for each candidate influencer $i$ in this subset ($i\in \mathcal{LI}$). Note that we only have a relatively small number of candidate influencers with expert labels, namely, $|\mathcal{LI}| \ll |\mathcal{I}|$. %and similarly, each worker $j \in \mathcal{J}$ has a feature vector $\mathbf{y}_j$. 
+We use $\mathcal{I}$ to denote the set of unique \emph{candidate} social influencers named by the crowd workers, and $\mathcal{J}$ to denote the set of workers. We use $\mathbf{A}_{i,j}=1$ to denote that the candidate influencer $i$ is an answer provided by worker $j$, and $\mathbf{A}_{i,j}=0$ otherwise. Note that $\mathbf{A}_{i,j}$ is a sparse matrix where only a small proportion of the entries are non-zero. 
+For each candidate influencer $i \in \mathcal{I}$, we collect her social features, such as number of followers, number of tweets, and the content of her tweets, and denote the resulting feature vector by $\mathbf{x}_i$. For a subset of $\mathcal{I}$, denoted as $\mathcal{LI}\subset \mathcal{I}$, we are given an expert label $y_i$ for each candidate influencer $i$ in this subset ($i\in \mathcal{LI}$). Note that we only have a relatively small number of candidate influencers with expert labels, namely, $|\mathcal{LI}| \ll |\mathcal{I}|$. %and similarly, each worker $j \in \mathcal{J}$ has a feature vector $\mathbf{y}_j$. 
 
 
 % Our goal is to find those candidate  in $\mathcal{I}$ that are of high-quality, denoted by $\mathcal{SI} \subset \mathcal{I}$. We use $z_i = 1$ to denote $i\in \mathcal{SI}$, and $z_i = 0$ otherwise.
 
-With the given notations, we formally define the problem of open-ended answer aggregation as follows.
+With the given notations, we formally define the problem of open-ended answers aggregation as follows.
 
 \smallskip
-\noindent\textbf{Problem Statement.} Given a set of candidate social influencers $\mathcal{I}$ with their social features $\mathbf{x}_i$ $(i \in \mathcal{I})$, and a set of workers $\mathcal{J}$ who named $\mathcal{I}$, we aim to infer the true labels $z_i \in \{0,1\}$ for all candidate influencers, by leveraging the answer matrix $\mathbf{A}$ and the existing labels $y_i$ for the limited number of labeled candidate influencers $i\in \mathcal{LI}$. 
+\noindent\textbf{Problem Statement.} Given a set of candidate social influencers $\mathcal{I}$, their social features $\mathbf{x}_i$ $(i \in \mathcal{I})$, and a set of workers $\mathcal{J}$ who collectively nominated $\mathcal{I}$, we aim at inferring true labels $z_i \in \{0,1\}$ for all candidate influencers by leveraging the answer matrix $\mathbf{A}$, as well as existing labels $y_i$ for the limited number of labeled candidate influencers $i\in \mathcal{LI}$. 
