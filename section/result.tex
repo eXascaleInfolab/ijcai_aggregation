@@ -36,8 +36,8 @@ ZenCrowd                           & Accuracy     & 0.701          & 0.686      
                              & AUC   & 0.157          & 0.175          & 0.203         & 0.239          & 0.287+         & 0.146          & 0.198          & 0.212          & 0.246          & 0.234          \\ \hline
 \multirow{2}{*}{LFC}         & Accuracy     & 0.721*         & 0.694          & 0.718          & 0.691          & 0.755          & 0.653          & 0.627          & 0.643          & 0.616          & 0.636          \\ %\cline{2-12} 
                              & AUC   & 0.203+         & 0.203+         & 0.225          & 0.264+         & 0.277          & 0.189*         & 0.192          & 0.215          & 0.276*         & 0.307*         \\ \hline
-\multirow{2}{*}{OpenCrowd}   & Accuracy     & \textbf{0.751} & \textbf{0.740} & \textbf{0.733}         & \textbf{0.7694} & \textbf{0.889}  & \textbf{0.673} & \textbf{0.674} & 0.662*         & 0.672*         & \textbf{0.686} \\ % \cline{2-12} 
-                             & auprc   & \textbf{0.304} & \textbf{0.350} & \textbf{0.350} & \textbf{0.452} & \textbf{0.495} & \textbf{0.207} & \textbf{0.213} & \textbf{0.267} & \textbf{0.300} & \textbf{0.333} \\ \bottomrule
+\multirow{2}{*}{OpenCrowd}   & Accuracy     & \textbf{0.751} & \textbf{0.740} & \textbf{0.733}         & \textbf{0.769} & \textbf{0.889}  & \textbf{0.673} & \textbf{0.674} & 0.662*         & 0.672*         & \textbf{0.686} \\ % \cline{2-12} 
+                             & AUC   & \textbf{0.304} & \textbf{0.350} & \textbf{0.350} & \textbf{0.452} & \textbf{0.495} & \textbf{0.207} & \textbf{0.213} & \textbf{0.267} & \textbf{0.300} & \textbf{0.333} \\ \bottomrule
 \end{tabular}
  \label{sec:compres}  
 \end{table*}
@@ -372,32 +372,4 @@ The sampling rate $s\_rate$ controls the size of randomly sampled candidate infl
    \caption{Performance of \sys with varying $s\_rate$.}\label{fig:sys_perf_it} 
 \end{figure}
 
-
-
-\subsection{Comparative Results}
-Table \ref{tab:comparision} summarizes the performance of all comparison methods. We consider both Accuracy (acc)
-and AUCPR to measure the effectiveness. Several interesting findings are observed as follows.
-\begin{table*}[!h]
-\centering
-\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|}
-\hline
-\multicolumn{2}{|l|}{Dataset}          & \multicolumn{5}{c|}{Fashion}                                                       & \multicolumn{5}{c|}{InfoTech}                                                            \\ \hline
-\multicolumn{2}{|l|}{Supervision rate} & 50\%           & 60\%           & 70\%           & 80\%           & 90\%           & 50\%           & 60\%           & 70\%           & 80\%           & 90\%           \\ \hline
-\multirow{2}{*}{DS}          & acc     & 0.689          & 0.716*         & 0.703          & 0.688          & 0.711*         & 0.662          & 0.660          & 0.626          & 0.641          & 0.536          \\ \cline{2-12} 
-                             & AUC   & 0.191          & 0.169          & 0.242          & 0.244          & 0.263          & 0.174          & 0.203*         & 0.222*         & 0.255          & 0.272          \\ \hline
-\multirow{2}{*}{GLAD}        & acc     & 0.697          & 0.716*         & 0.724          & 0.700          & 0.688          & 0.669*         & 0.667          & 0.637          & 0.672          & 0.595          \\ \cline{2-12} 
-                             & AUC   & 0.183          & 0.189          & 0.229          & 0.224          & 0.263          & 0.150          & 0.186          & 0.138          & 0.219          & 0.307*         \\ \hline
-ZC                           & acc     & 0.701          & 0.686          & 0.733* & 0.702*         & 0.688          & 0.651          & 0.674*         & \textbf{0.664} & \textbf{0.683} & 0.627*         \\ \cline{2-12} 
-                             & AUC   & 0.157          & 0.175          & 0.203*         & 0.239          & 0.287*         & 0.146          & 0.198          & 0.212          & 0.246          & 0.234          \\ \hline
-\multirow{2}{*}{LFC}         & acc     & 0.721*         & 0.694          & 0.718          & 0.691          & 0.755          & 0.653          & 0.627          & 0.643          & 0.616          & 0.636          \\ \cline{2-12} 
-                             & AUC   & 0.203*         & 0.203*         & 0.225          & 0.264*         & 0.277          & 0.189*         & 0.192          & 0.215          & 0.276*         & 0.307*         \\ \hline
-\multirow{2}{*}{OpenCrowd}   & acc     & \textbf{0.751} & \textbf{0.740} & \textbf{0.733}         & \textbf{0.769} & \textbf{0.889}  & \textbf{0.673} & \textbf{0.674} & 0.662*         & 0.672*         & \textbf{0.686} \\ \cline{2-12} 
-                             & auprc   & \textbf{0.304} & \textbf{0.350} & \textbf{0.350} & \textbf{0.452} & \textbf{0.495} & \textbf{0.207} & \textbf{0.213} & \textbf{0.267} & \textbf{0.300} & \textbf{0.333} \\ \hline
-\end{tabular}
-   \caption{Performance in terms of Accuracy (acc) and AUC where best performance is highledted in bold and the second best performance is marked by `*' }\label{tab:comparision} 
-\end{table*}
-\label{sec:compres}
-
-\smallskip
-\noindent\textbf{Impacts of Supervision Degree.}
 
