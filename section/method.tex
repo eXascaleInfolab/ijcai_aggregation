@@ -5,14 +5,14 @@
 \sys is a probabilistic framework that aggregates open-ended answers while taking into account worker reliability. In this section, we first introduce how \sys models the open-ended question-answering process, and then introduce the Expectation Maximization method for learning the parameters. Subsequently, we present a Bayesian version of our framework with an efficient variational inference algorithm for characterizing the uncertainty of worker relability. 
 
 \subsection{\sys as a Generative Model}
-To infer the true label of a candidate social influencer, we adopt a Bayesian network to describe the open-ended question-answering process as a generative process. In this process, the true label of a candidate influencer follows a Bernoulli distribution:
+To infer the true label of a candidate social influencer, we adopt a Bayesian network to describe the open-ended question-answering process as a generative process. In this process, the true label of a candidate influencer follows a Bernoulli distribution \mkh{don't we want to explain why!}:
 %
 \begin{equation}
     z_i \sim Ber(\theta_i), \theta_i  = \sigma (f^{\mathcal{W}_I}(\mathbf{x}_i)),
     \label{eq:dis_item}
 \end{equation}
 %
-where $\theta_i$ is the parameter of the distribution predicted by the social features of the candidate influencer through a linear model or a neural network, denoted by $f$; $\mathcal{W}_I$ is the parameter of the model; $\sigma$ is the sigmoid function. Note that $\mathcal{W}_I$ is shared among all candidate influencers, thus amortizing the inference \cite{gershman2014amortized} by exploiting the similarity among candidate influencers. 
+where $\theta_i$ is the parameter of the distribution predicted by the social features of the candidate influencer through a linear model or a neural network, denoted by $f$ \mkh{f()?}; $\mathcal{W}_I$ is the parameter of the model; $\sigma$ is the sigmoid function. Note that $\mathcal{W}_I$ is shared among all candidate influencers, thus amortizing the inference \cite{gershman2014amortized} by exploiting the similarity among candidate influencers. 
 
 
 We then model worker reliability by $r_j \in [0,1]$ $(j\in \mathcal{J})$, where $r_j=1$ indicates the worker is fully reliable and $r_j=0$ indicates the worker is not reliable. We use the reliability of a worker to define the probability of her named candidate influencer being a true influencer:
@@ -22,7 +22,7 @@ We then model worker reliability by $r_j \in [0,1]$ $(j\in \mathcal{J})$, where 
     \label{eq:item_worker}
 \end{equation}
 %
-where $\mathbbm{1}(\cdot)$ is an indicator function. Note that the above equation considers a worker to be reliable if she does not name a candidate influencer who turns out not be a not real influencer. It is, however, likely that a worker does not name a candidate influencer $i$ simply because she did not think of $i$. That means that we can only partly treat the non-named candidate influencers as those the worker considers as non-influencers. It is, therefore, necessary to introduce negative sampling into the inference algorithm, which we introduce in Section~\ref{sec:em}. 
+where $\mathbbm{1}(\cdot)$ is an indicator function. Note that the above equation \mkh{which one?} considers a worker to be reliable if she does not name a candidate influencer who turns out not be a not real influencer. It is, however, likely that a worker does not name a candidate influencer $i$ simply because she did not think of $i$. That means that we can only partly treat the non-named candidate influencers as those the worker considers as non-influencers. It is, therefore, necessary to introduce negative sampling into the inference algorithm, which we introduce in Section~\ref{sec:em}. 
 
 Worker reliability $r_j$ is so far assumed to be a fixed parameter. In practice, we would like to distinguish our \emph{confidence} in estimating the reliability of the workers providing different numbers of answers: we should be more confident in estimating the reliability of workers who provide 50 answers than those who only provide 5 answers. To quantify the confidence in our inference, we adopt a Bayesian treatment of $r_j$ by introducing a prior:
 %
@@ -31,7 +31,7 @@ Worker reliability $r_j$ is so far assumed to be a fixed parameter. In practice,
         \label{eq:rj_dist}
 \end{equation}
 %
-The incorporation of confidence will make our framework more robust to overfitting, as we show in our experiments. 
+\mkh{A and B?}The incorporation of confidence will make our framework more robust to overfitting, as we show in our experiments. 
 
 The overall \sys framework is depicted in Figure~\ref{fig:graphical_model}. Model learning concerns parameter learning for $\mathcal{W}_I$ (and $r_j$ when modeled as a fixed parameter) and posterior inference for $z_i$ (and $r_j$ when modeled as a latent variable).  
 
@@ -61,7 +61,7 @@ The overall \sys framework is depicted in Figure~\ref{fig:graphical_model}. Mode
 
 \end{tikzpicture}
 }
-\caption{Graphical model of \sys. Double (greyed) circles represent observed variables, while single circles represent latent variables.  Squares represent model parameters. We note that worker reliability $r_j$ can either be a fixed parameter or a latent variable (thus, it is denoted by a dashed circle in the figure). Edges represent conditional relationship in answer generation.}
+\caption{Graphical model \mkh{representation?} of \sys. Double (greyed) circles represent observed variables, while single circles represent latent variables.  Squares represent model parameters. We note that worker reliability $r_j$ can either be a fixed parameter or a latent variable (thus, it is denoted by a dashed circle in the figure). Edges represent conditional relationship in answer generation.}
 \label{fig:graphical_model}
 \end{figure}
 
@@ -94,7 +94,7 @@ Given the the true labels of candidate influencers inferred by the E-step, the M
     +\underbrace{\sum_{z_i}p(z_i)\log p(z_i |\mathbf{x}_i;\mathcal{W}_I)}_{\mathcal{M}_2},
     \nonumber
 \end{align}
-where $p(z_i)$ is obtained by Equation~\ref{eq:dist_cond}. We observe that the M-step can be decomposed in two parts independent of each other. The first part, $\mathcal{M}_1$, can be solved via stochastic gradient ascent (SGA). The gradient of $r_j$ is given by:
+where $p(z_i)$ is obtained by Equation~\ref{eq:dist_cond}. We observe that the M-step can be decomposed into two parts independent of each other. The first part, $\mathcal{M}_1$, can be solved via stochastic gradient ascent (SGA). The gradient of $r_j$ is given by:
 %
 \begin{equation}
     \frac{\partial \mathcal{M}_1}{\partial r_j}=\frac{p(\mathbf{A}_{i,j}=z_i)}{r_j}-\frac{p(\mathbf{A}_{i,j}\neq z_i)}{1-r_j}.
@@ -128,11 +128,11 @@ where $\phi_i$, $\alpha_j$ and $\beta_j$ are variational parameters used to perf
 q(z_i)    \propto \prod_{j \in \mathcal{J}_{i}} \exp{\{\mathbb{E}_{q(r_j)}[\log (P(\mathbf{A}_{i,j}|z_i,r_j))]\}}   \times P(z_i|x_i, \mathcal{W}_I). \\
 \end{equation}
 %
-We distinguish between two cases:
+We distinguish between the following two cases:
 %
 \begin{align}
-    q(z_i=0)   &= \prod_{j \in \mathcal{J}_{i}} \exp{\{\mathbb{E}_{q(r_j)}[\log (1-r_j)]\}}\times (1-\theta_i) \nonumber, \\
-    q(z_i=1)   &= \prod_{j \in \mathcal{J}_{i}} \exp{\{\mathbb{E}_{q(r_j)}[\log (r_j)]\}}\times \theta_i .
+  1)~ q(z_i=0)   &= \prod_{j \in \mathcal{J}_{i}} \exp{\{\mathbb{E}_{q(r_j)}[\log (1-r_j)]\}}\times (1-\theta_i) \nonumber, \\
+  2)~ q(z_i=1)   &= \prod_{j \in \mathcal{J}_{i}} \exp{\{\mathbb{E}_{q(r_j)}[\log (r_j)]\}}\times \theta_i .
 \label{eq:q_two_poss}                
 \end{align}
 %
@@ -199,11 +199,11 @@ The M-step for learning $\mathbf{W}_I$ can be performed in a similar manner as i
     E-step:\\
         \For {$i \in \mathcal{I}$}
         {
-                update $q(z_i)$ by Equation~\ref{eq:qzi}\;
+                update $q(z_i)$ using Equation~\ref{eq:qzi}\;
         } 
         \For {$j \in \mathcal{J}$}
         {
-                update $q(r_j)$ by Equation~\ref{eq:qrj}\;
+                update $q(r_j)$ using Equation~\ref{eq:qrj}\;
         }
        M-step: \\
         \For {$i \in \mathcal{I}$}
