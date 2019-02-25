@@ -129,8 +129,15 @@ reliability.
 
 \smallskip
 \noindent\textbf{Impacts of Sampling Rate.}
-\smallskip
-\noindent\textbf{Impacts of Supervision Degree.}
+The sampling rate controls the random sample of candidate influencers not named by a worker 
+and considered as relevant candidate influencers in estimating that worker's reliability as shown in
+Equation\ref{eq:dist_cond}. We apply a grid search ranging in \{0, 1, 5, 10, 20, 50, 100\} to
+investigate the impact of negative sampling. The results are shown in Figure~\ref{fig:sys_perf_fashion}
+and Figure~\ref{fig:sys_perf_it} for respectively the Fashion domain and the IT domain.
+For both datasets, as the sampling rate varies from 0 to 100, the performance in terms of accuracy and 
+AUCPR increases then decreases with the maximum reached for a sampling rate of 10 for the Fashion Dataset
+and 50 for the IT dataset. Thus, the negative sampling reflects workers choice of not naming certain candidates.
+
 \begin{figure}[htb]\centering
 	\begin{subfigure}[t]{0.47\columnwidth}
 \begin{tikzpicture}[scale=0.5]
@@ -234,8 +241,7 @@ reliability.
     \vspace{-0.15in}
         \caption{AUCPR\label{fig:aucpr_sr}} 
  \end{subfigure}
-  \label{fig:sys_perf} 
-   \caption{Fashion dataset (supervision 60\%)}
+   \caption{Fashion dataset (supervision 60\%)}  \label{fig:sys_perf_fashion} 
 \end{figure}
 
 \begin{figure}[htb]\centering
@@ -268,7 +274,7 @@ reliability.
 (0,	0.66941	)
 (1,	0.68)	
 (5,	0.6494)	
-(10,	0.67176)	
+(10,	0.67411)	
 (20,	0.67647)	
 (50,	0.6811764)	
 (80,	0.67411)	
@@ -340,9 +346,11 @@ reliability.
 \end{tikzpicture}
  \caption{AUCPR\label{fig:aucpr_sr_it}} 
  \end{subfigure}
-  \label{fig:sys_perf} 
-   \caption{IT dataset (supervision 70\%)}
+   \caption{IT dataset (supervision 60\%)}\label{fig:sys_perf_it} 
 \end{figure}
+
+\smallskip
+\noindent\textbf{Impacts of Supervision Degree.}
 
 \subsection{Comparative Results}
 \begin{table*}[!h]
