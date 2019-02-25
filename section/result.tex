@@ -3,7 +3,7 @@
 
 \subsection{Experimental Setup}
 
-\noindent\textbf{Datasets.} We consider the problem of finding social influencers in two domains: fashion and information technology (InfoTech). For both domains, we publish question-answering tasks in Figure Eight\footnote{\url{https://www.figure-eight.com}} and collect crowd workers' answers. Important statistics of these datasets are presented in Table~\ref{tab:datasets}. For both datasets, we randomly select 40\% of the candidate influencers and ask domain experts to label them. Our initial analysis reveals that 30.64\% and 32.78\%  of crowd answers in the fashion domain and the InfoTech domain respectively are true influencers. Considering the relatively large number of crowd answers collected in a short period of time ($<$10 hours for both Fashion and InfoTech), this result validates our assumption that crowdsourced open-ended question-answering provides an efficient way for finding social influncers. Moreover, the sparsity of the answer matrix (Table~\ref{tab:datasets}) and the high percentage of incorrect answers motivates the necessity of open-ended answer aggregation that takes into account worker reliability.
+\noindent\textbf{Datasets.} We consider the problem of finding social influencers in two domains: fashion and information technology (InfoTech). For both domains, we publish question-answering tasks in Figure Eight\footnote{\url{https://www.figure-eight.com}} and collect crowd workers' answers. Key statistics of these datasets are reported in Table~\ref{tab:datasets}. For both datasets, we randomly select 40\% of the candidate influencers and ask domain experts to label them. Our initial analysis reveals that 30.64\% and 32.78\%  of crowd answers are true influencers for Fashion and InfoTech, respectively. Considering the relatively large number of crowd answers collected in a short period of time ($<$10 hours for both Fashion and InfoTech), this result validates our assumption that crowdsourced open-ended question-answering provides an efficient way for finding social influncers. Moreover, the high sparsity of the answer matrices (Table~\ref{tab:datasets}) and the fact that the majority of the answers being incorrect verify the necessity of open-ended answers aggregation that takes into account worker reliability.
 
 \begin{table}[!ht]
 %\small
@@ -14,24 +14,24 @@ datasets.}\label{tab:datasets}
 \begin{tabular}{lcccc}
 \toprule
     Datasets &\#Cand. Infl. &\#Workers &\#Answers &Sparsity   \\\midrule
-    Fashion & 890 & 250 & 1416  & 0.652 \\
-    InfoTech & 1057 & 200 &1643 & 0.729 \\
+    Fashion & 890 & 250 & 1416  & 99.36\% \\
+    InfoTech & 1057 & 200 &1643 & 99.22\% \\
 \bottomrule
 \end{tabular}
 % \vspace{-0.1in}
 \end{table}
 
 \smallskip
-\noindent\textbf{Comparison Methods.} Due to the lack of existing open-ended answer aggregation methods, we compare with the following state-of-the-art closed-pool answer aggregation methods: 1) LFC \cite{raykar2010learning}, EM method 
-that incorporate priors into worker's model; 2) ZenCrowd \cite{demartini2012zencrowd}, EM method that estimates worker reliability as a model parameter; 3) Dawid-Skene \cite{dawid1979maximum}, EM method that learns worker reliability as a confusion matrix; 4) GLAD \cite{whitehill2009whose}, EM method that simutaneously learn worker reliability and task difficulty. To apply these methods to our problem, we use negative sampling to simulate workers' answers of non-influencers; we empirically find the optimal sampling rates for each comparison method. 
+\noindent\textbf{Comparison Methods.} Due to the lack of existing open-ended answer aggregation methods, we compare with the following state-of-the-art closed-pool answers aggregation methods: 1) ZenCrowd \cite{demartini2012zencrowd}, EM method that estimates worker reliability as a model parameter; 2) Dawid-Skene \cite{dawid1979maximum}, EM method that learns worker reliability as a confusion matrix; 3) GLAD \cite{whitehill2009whose}, EM method that simutaneously learn worker reliability and task difficulty; and 4) LFC \cite{raykar2010learning}, EM method 
+that incorporate priors in modeling worker reliability. To apply these methods to our problem, we use negative sampling to simulate workers' answers of non-influencers; we empirically find the optimal sampling rates for each comparison method. 
 
-For \sys, we compare the following variants. a) LR: simplified \sys with only a logistic regression model trained on the labeled subset of candidate influencers for influencer classification; 2) NN: simplified \sys with only a multi-layer perceptron; 3) \sys-EM: \sys that further leverages worker answer matrix however models worker reliability as a fixed paramter; 4) \sys, the Bayesian version that models worker reliability as a latent variable.
-
-\smallskip
-\noindent\textbf{Parameter Settings.} The parameters of our framework and those for model training are empirically set. We search for the best model architecture for NN, and the predictor $f$ in \sys-EM and \sys with 0, 1, and 2 hidden layers, and apply a grid search in \{64, 128, 256, 512, 1024\} for the dimension of the hidden layers. In model training, we select learning rates from \{0.0001, 0.001, 0.01, 0.1, 1\} for the learning of $\mathbf{W}_I$ in all variants of our framework, as well as for the learning of $r_j$ in \sys-EM. To investigate the impact of negative sampling, we experiment with sampling rate ($s\_rate$) from \{0, 1, 5, 10, 20, 50, 100\} where $s\_rate=5$ indicates that for each worker, the negative samples is five times the size of the candidate influencers named by the worker. 
+For \sys, we compare the following variants: 1) LR, simplified \sys with only a logistic regression model trained on the labeled subset of candidate influencers; 2) NN: simplified \sys with only a multi-layer perceptron; 3) \sys-EM: \sys that aggregates workers' answers however models worker reliability as a fixed paramter; 4) \sys, the Bayesian version that models worker reliability as a latent variable.
 
 \smallskip
-\noindent\textbf{Evaluation Protocols.} We split the labeled subset of candidate influencers into training, validation, and test sets. \sys is trained on the answer matrix and the training set, and evaluated on the test set. Validation set is used to search for the optimal parameter settings. To investigate the impact of the degree of supervision ($s\_deg$) on \sys performance, we split the labeled subset by $s\_deg\in \{50\%, 60\%, 70\%, 80\%, 90\%\}$, where $s\_deg = 60\%$ means that 60\% of the labeled subset is used for training, and the rest for validation and test with equal split.
+\noindent\textbf{Parameter Settings.} The parameters of our framework and those for model training are empirically set. We search for the best model architecture for NN, and the predictor $f$ in \sys-EM and \sys, with 0, 1, and 2 hidden layers, and apply a grid search in \{64, 128, 256, 512, 1024\} for the dimension of the hidden layers. In model training, we select learning rates from \{0.0001, 0.001, 0.01, 0.1, 1\} for the learning of $\mathbf{W}_I$ in all variants of our framework, as well as for the learning of $r_j$ in \sys-EM. To investigate the impact of negative sampling, we experiment with sampling rate ($s\_rate$) from \{0, 1, 5, 10, 20, 50, 100\} where $s\_rate=5$ indicates that for each worker, the negative samples is five times the size of the candidate influencers named by each worker. 
+
+\smallskip
+\noindent\textbf{Evaluation Protocols.} We split the labeled subset of candidate influencers into training, validation, and test sets. \sys is trained on the answer matrix and the training set, tuned on the valiation set and evaluated on the test set. To investigate the impact of the degree of supervision ($s\_deg$) on \sys performance, we split the labeled subset by $s\_deg\in \{50\%, 60\%, 70\%, 80\%, 90\%\}$, where $s\_deg = 60\%$ means that 60\% of the labeled subset is used for training, and the rest for validation and test with equal split. We use accuracy and area under the precision-recall curve (AUC) to measure the performance. Higher values of accuracy and AUC indicate better performance.
 
 
 
@@ -39,20 +39,14 @@ For \sys, we compare the following variants. a) LR: simplified \sys with only a 
 \label{sec:selfres}
 
 \noindent\textbf{Results of \sys Variants.}
-The performance of our four variants is depicted by Figure \ref{fig:variants}.
-\sys-EM outperforms both LR and NN by 13.05\% and XX\% in accuracy
-and by 3.435\% and XX\% in AUCPR  showing the effectiveness of both using
-the worker reliability and social feature of influencers. \sys modeling the 
-worker reliability as a Beta distribution, performs the best among the four variants
-with 1.7\% lift in accuracy indicating the benefir of considering priors to worker's 
-reliability.
+The performance of our four variants is depicted by Figure \ref{fig:variants}. \sys-EM outperforms both LR and NN by 13.05\% and XX\% accuracy and by 3.435\% and XX\% AUC, respectively. These results clearly show the effectiveness of aggregating workers' answers while considering worker reliability. Among the four variants, \sys performs the best and compared to \sys-EM, the performance improves by 1.7\% accuracy and XX\% AUC. This result indicates that modeling the worker reliability as a latent variable not only helps quantify the confidence of estimating worker reliability, but also improves the aggregation performance.
 \begin{figure}[htb]
 \begin{subfigure}[t]{0.47\columnwidth}
         \centering
     \pgfplotstableread[row sep=\\,col sep=&]{
        cases & LR & NN & EM & VEM \\
        Fashion     &0.604166667  & 0.7006  & 0.7333 &0.7555  \\
-       IT    & 0.511 & 0.6  & 0.641&0.647 \\
+       InfoTech    & 0.511 & 0.6  & 0.641&0.647 \\
     }\mydata
 
     \begin{tikzpicture}[scale=0.5]
@@ -61,9 +55,9 @@ reliability.
     bar width=.55cm,
     width=2\textwidth,
     height=1.5\textwidth,
-    legend style={at={(0.67,1.2)},
+    legend style={at={(1.2,1.2)},
        anchor=north,legend columns= 4, font = \LARGE},
-    symbolic x coords={Fashion, IT},
+    symbolic x coords={Fashion, InfoTech},
     xtick=data,
     enlarge x limits=0.3,
     ymin=0.4,ymax=0.80,
@@ -77,7 +71,7 @@ reliability.
     \addplot[draw=blue,fill=blue!40!white] table[x=cases,y=NN]{\mydata};
     \addplot[draw=black,fill=black!50!white, thick] table[x=cases,y=EM]{\mydata};
     \addplot[draw=red,fill=red!40!white, thick] table[x=cases,y=VEM]{\mydata};
-    \legend{LR, NN, EM, VEM}
+    \legend{LR, NN, \sys-EM, \sys}
     \end{axis}
     \end{tikzpicture}
     \vspace{-0.15in}
@@ -90,7 +84,7 @@ reliability.
     \pgfplotstableread[row sep=\\,col sep=&]{
        cases & LR & NN & EM & VEM \\
        Fashion     &0.235142445  & 0.2154  &0.277139619 &0.42670444  \\
-       IT   &0.18673464  & 0.2154  & 0.2134 &0.2137 \\
+       InfoTech   &0.18673464  & 0.2154  & 0.2134 &0.2137 \\
     }\mydata
 
     \begin{tikzpicture}[scale=0.5]
@@ -101,7 +95,7 @@ reliability.
     height=1.5\textwidth,
     legend style={at={(0.67,1.2)},
        anchor=north,legend columns= 4, font = \LARGE},
-    symbolic x coords={Fashion, IT},
+    symbolic x coords={Fashion, InfoTech},
     xtick=data,
     enlarge x limits=0.3,
     ymin=0.1,ymax=0.5,
@@ -115,28 +109,20 @@ reliability.
     \addplot[draw=blue,fill=blue!40!white] table[x=cases,y=NN]{\mydata};
     \addplot[draw=black,fill=black!50!white, thick] table[x=cases,y=EM]{\mydata};
     \addplot[draw=red,fill=red!40!white, thick] table[x=cases,y=VEM]{\mydata};
-    \legend{LR, NN, EM, VEM}
+    \legend{}
     \end{axis}
     \end{tikzpicture}
     \vspace{-0.15in}
-        \caption{AUCPR\label{fig:aucpr}} 
+        \caption{AUC\label{fig:AUC}} 
     \end{subfigure}% 
-   \caption{\sys performance} \label{fig:variants}
+   \caption{Performance of our four variants.} \label{fig:variants}
 \end{figure}
 
-\smallskip
-\noindent\textbf{Benefits of Incorporating Confidence.}
+To quantitatively understand the benefit of incorporating the confidence of worker reliability in \sys, we show in Figure~\ref{fig:XXX} two examples of workers of similar reliability yet providing different number of answers. We observe that their reliability, as estimated by \sys-EM, are hardly distinguiable; however, \sys provides extra insight that the estimated reliability of the left worker is more trustable than that of the right worker.
 
 \smallskip
 \noindent\textbf{Impacts of Sampling Rate.}
-The sampling rate controls the random sample of candidate influencers, not named by a worker, 
-and considered as relevant candidate influencers in estimating that worker's reliability. 
-We apply a grid search in \{0, 1, 5, 10, 20, 50, 100\} to
-investigate the impact of negative sampling. The results are shown in Figure~\ref{fig:sys_perf_fashion}
-and~\ref{fig:sys_perf_it} for respectively the Fashion domain and the IT domain.
-For both datasets, as the sampling rate varies from 0 to 100, the performance in terms of accuracy and 
-AUCPR increases then decreases with the maximum reached for a sampling rate of 10 for the Fashion Dataset
-and 50 for the IT dataset. Thus, the negative sampling reflects workers choice of not naming certain candidates.
+The sampling rate $s\_rate$ controls the size of randomly sampled candidate influencers in estimating workers' reliability. The results are shown in Figure~\ref{fig:sys_perf_it}. We observe that, as the sampling rate varies from 0 to 100, the performance first increases then decreases. Such a result is consistent on both datasets, measured by both accuracy and AUC. The maximum performance is reached for $s\_rate= 10$ for Fashion and $s\_rate= 50$ for InfoTech, indicating that workers evaluation about the candidate influencers they do not name is more negative in InfoTech. Overal, the variation of the performance with different $s\_rate$ indicates the importance of selecting the right sampling rate. The similarity in performance variation across the two datasets demonstrates the robustness of \sys.
 
 \begin{figure}[htb]\centering
 	\begin{subfigure}[t]{0.47\columnwidth}
@@ -148,7 +134,7 @@ and 50 for the IT dataset. Thus, the negative sampling reflects workers choice o
     ymin=0.6, ymax=0.8,
     xtick={0,20,40,60,80,100},
     ytick={0.6,0.65,0.7,0.75,0.8},
-       legend style={at={(0.67,1.2)},
+       legend style={at={(1.15,1.2)},
        anchor=north,legend columns= 4, font = \LARGE},
     yticklabel style = {font=\huge,xshift=0.5ex},
     xticklabel style = {font=\huge,yshift=0.5ex},
@@ -184,17 +170,17 @@ and 50 for the IT dataset. Thus, the negative sampling reflects workers choice o
              (80,  0.6805555)
              (100,  0.6805555)
         };   
-\legend{EM,VEM}
+\legend{\sys-EM, \sys}
 \end{axis}
 \end{tikzpicture}
     \vspace{-0.15in}
-        \caption{Accuracy\label{fig:acc_sr}} 
+        \caption{Fashion - Accuracy\label{fig:acc_sr}} 
  \end{subfigure}
  \begin{subfigure}[t]{0.47\columnwidth}
 \begin{tikzpicture}[scale=0.5]
 \begin{axis}[
     xlabel={Sampling Rate},
-    ylabel={AUCPR},
+    ylabel={AUC},
     xmin=0, xmax=100,
     ymin=0.2, ymax=0.4,
     xtick={0,20,40,60,80,100},
@@ -235,16 +221,13 @@ and 50 for the IT dataset. Thus, the negative sampling reflects workers choice o
 (80	,	0.350392)
 (100	,0.350547	)
         };   
-\legend{EM,VEM}
+\legend{}
 \end{axis}
 \end{tikzpicture}
     \vspace{-0.15in}
-        \caption{AUCPR\label{fig:aucpr_sr}} 
+        \caption{Fashion - AUC\label{fig:AUC_sr}} 
  \end{subfigure}
-   \caption{Fashion dataset (supervision 60\%)}  \label{fig:sys_perf_fashion} 
-\end{figure}
-
-\begin{figure}[htb]\centering
+   
 	\begin{subfigure}[t]{0.47\columnwidth}
 \begin{tikzpicture}[scale=0.5]
 \begin{axis}[
@@ -290,17 +273,17 @@ and 50 for the IT dataset. Thus, the negative sampling reflects workers choice o
 (80	,	0.647058	)	
 (100,	0.647058)
         };   
-\legend{EM,VEM}
+\legend{}
 \end{axis}
 \end{tikzpicture}
     \vspace{-0.15in}
-        \caption{Accuracy\label{fig:acc_sr_it}} 
+        \caption{InfoTech - Accuracy\label{fig:acc_sr_it}} 
  \end{subfigure}
  \begin{subfigure}[t]{0.47\columnwidth}
 \begin{tikzpicture}[scale=0.5]
 \begin{axis}[
     xlabel={Sampling Rate},
-    ylabel={AUCPR},
+    ylabel={AUC},
     xmin=0, xmax=100,
     ymin=0.1, ymax=0.4,
     xtick={0,20,40,60,80,100},
@@ -341,16 +324,14 @@ and 50 for the IT dataset. Thus, the negative sampling reflects workers choice o
 (80,	0.200248)
 (100,	0.1940062)
         };   
-\legend{EM,VEM}
+\legend{}
 \end{axis}
 \end{tikzpicture}
- \caption{AUCPR\label{fig:aucpr_sr_it}} 
+ \caption{InfoTech - AUC\label{fig:AUC_sr_it}} 
  \end{subfigure}
-   \caption{IT dataset (supervision 60\%)}\label{fig:sys_perf_it} 
+   \caption{Performance of \sys with varying $s\_rate$.}\label{fig:sys_perf_it} 
 \end{figure}
 
-\smallskip
-\noindent\textbf{Impacts of Supervision Degree.}
 
 \subsection{Comparative Results}
 Table \ref{tab:comparision} summarizes the performance of all comparison methods. We consider both Accuracy (acc)
@@ -359,19 +340,22 @@ and AUCPR to measure the effectiveness. Several interesting findings are observe
 \centering
 \begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|}
 \hline
-\multicolumn{2}{|l|}{Dataset}          & \multicolumn{5}{c|}{Fashion}                                                       & \multicolumn{5}{c|}{IT}                                                            \\ \hline
+\multicolumn{2}{|l|}{Dataset}          & \multicolumn{5}{c|}{Fashion}                                                       & \multicolumn{5}{c|}{InfoTech}                                                            \\ \hline
 \multicolumn{2}{|l|}{Supervision rate} & 50\%           & 60\%           & 70\%           & 80\%           & 90\%           & 50\%           & 60\%           & 70\%           & 80\%           & 90\%           \\ \hline
 \multirow{2}{*}{DS}          & acc     & 0.689          & 0.716*         & 0.703          & 0.688          & 0.711*         & 0.662          & 0.660          & 0.626          & 0.641          & 0.536          \\ \cline{2-12} 
-                             & aucpr   & 0.191          & 0.169          & 0.242          & 0.244          & 0.263          & 0.174          & 0.203*         & 0.222*         & 0.255          & 0.272          \\ \hline
+                             & AUC   & 0.191          & 0.169          & 0.242          & 0.244          & 0.263          & 0.174          & 0.203*         & 0.222*         & 0.255          & 0.272          \\ \hline
 \multirow{2}{*}{GLAD}        & acc     & 0.697          & 0.716*         & 0.724          & 0.700          & 0.688          & 0.669*         & 0.667          & 0.637          & 0.672          & 0.595          \\ \cline{2-12} 
-                             & aucpr   & 0.183          & 0.189          & 0.229          & 0.224          & 0.263          & 0.150          & 0.186          & 0.138          & 0.219          & 0.307*         \\ \hline
+                             & AUC   & 0.183          & 0.189          & 0.229          & 0.224          & 0.263          & 0.150          & 0.186          & 0.138          & 0.219          & 0.307*         \\ \hline
 ZC                           & acc     & 0.701          & 0.686          & \textbf{0.733} & 0.702*         & 0.688          & 0.651          & 0.674*         & \textbf{0.664} & \textbf{0.683} & 0.627*         \\ \cline{2-12} 
-                             & aucpr   & 0.157          & 0.175          & 0.203*         & 0.239          & 0.287*         & 0.146          & 0.198          & 0.212          & 0.246          & 0.234          \\ \hline
+                             & AUC   & 0.157          & 0.175          & 0.203*         & 0.239          & 0.287*         & 0.146          & 0.198          & 0.212          & 0.246          & 0.234          \\ \hline
 \multirow{2}{*}{LFC}         & acc     & 0.721*         & 0.694          & 0.718          & 0.691          & 0.755          & 0.653          & 0.627          & 0.643          & 0.616          & 0.636          \\ \cline{2-12} 
-                             & aucpr   & 0.203*         & 0.203*         & 0.225          & 0.264*         & 0.277          & 0.189*         & 0.192          & 0.215          & 0.276*         & 0.307*         \\ \hline
+                             & AUC   & 0.203*         & 0.203*         & 0.225          & 0.264*         & 0.277          & 0.189*         & 0.192          & 0.215          & 0.276*         & 0.307*         \\ \hline
 \multirow{2}{*}{OpenCrowd}   & acc     & \textbf{0.724} & \textbf{0.733} & 0.725*         & \textbf{0.733} & \textbf{0.75}  & \textbf{0.673} & \textbf{0.674} & 0.662*         & 0.672*         & \textbf{0.686} \\ \cline{2-12} 
                              & auprc   & \textbf{0.265} & \textbf{0.277} & \textbf{0.273} & \textbf{0.299} & \textbf{0.388} & \textbf{0.207} & \textbf{0.213} & \textbf{0.267} & \textbf{0.300} & \textbf{0.333} \\ \hline
 \end{tabular}
-   \caption{Performance in terms of Accuracy (acc) and AUCPR where best performance is highledted in bold and the second best performance is marked by `*' }\label{tab:comparision} 
+   \caption{Performance in terms of Accuracy (acc) and AUC where best performance is highledted in bold and the second best performance is marked by `*' }\label{tab:comparision} 
 \end{table*}
 \label{sec:compres}
+
+\smallskip
+\noindent\textbf{Impacts of Supervision Degree.}
