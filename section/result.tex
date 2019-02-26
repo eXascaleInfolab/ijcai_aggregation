@@ -78,7 +78,7 @@ Most importantly, our framework \sys achieves the best performance among all ans
 \label{sec:selfres}
 
 \noindent\textbf{Results of \sys Variants.}
-The comparison between \sys variants against feature-based methods is shown in Figure \ref{fig:variants}. \sys-EM outperforms both LR and MLP by 13.05\% and 19.95\% accuracy and by 23.23\% and 25.46\% AUC, respectively. These results clearly show the importance of considering worker reliability in aggregating workers' answers. Among the two variants, \sys outperforms \sys-EM by 3\% accuracy and 53\% AUC. This result indicates that modeling the worker reliability as a latent variable with a prior distribution not only makes the model more robust, but also improves the aggregation performance in terms of accuracy and AUC. 
+The comparison between \sys variants against feature-based methods is shown in Figure \ref{fig:variants}. \sys-EM outperforms both LR and MLP by 13.05\% and 19.95\% accuracy and by 23.23\% and 25.46\% AUC, respectively. These results clearly show the importance of considering worker reliability in aggregating workers' answers. Among the two variants, \sys outperforms \sys-EM by 2.65\% accuracy and 28.60\% AUC. This result indicates that modeling the worker reliability as a latent variable with a prior distribution not only makes the model more robust, but also improves the aggregation performance in terms of accuracy and AUC. 
 \begin{figure}[htb]
 \begin{subfigure}[t]{0.33\columnwidth}
         \centering
@@ -98,7 +98,7 @@ The comparison between \sys variants against feature-based methods is shown in F
        anchor=north,legend columns= 4, font = \LARGE},
     symbolic x coords={Fashion, InfoTech},
     xtick=data,
-    enlarge x limits=0.3,
+    enlarge x limits=0.4,
     ymin=0.4,ymax=0.80,
     ylabel={Accuracy},
     yticklabel style = {xshift=0.5ex},
@@ -136,7 +136,7 @@ The comparison between \sys variants against feature-based methods is shown in F
        anchor=north,legend columns= 4, font = \LARGE},
     symbolic x coords={Fashion, InfoTech},
     xtick=data,
-    enlarge x limits=0.3,
+    enlarge x limits=0.4,
     ymin=0.1,ymax=0.5,
     ylabel={AUC},
     yticklabel style = {xshift=0.5ex},
