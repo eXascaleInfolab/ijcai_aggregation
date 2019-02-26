@@ -18,11 +18,11 @@ where $\theta_i$ is the parameter of the distribution predicted by the social fe
 We then model worker reliability by $r_j \in [0,1]$ $(j\in \mathcal{J})$, where $r_j=1$ indicates the worker is fully reliable and $r_j=0$ indicates the worker is not reliable. We use the reliability of a worker to define the probability of her named candidate influencer being a true influencer:
 %
 \begin{equation}
-    p(\mathbf{A}_{i,j} | z_i,  r_j) = r_j^{\ \mathbbm{1}[z_i=\mathbf{A}_{i,j}]} (1- r_j)^{\mathbbm{1}[z_i\ne \mathbf{A}_{i,j}]},
+    p(\mathbf{A}_{i,j} | z_i,  r_j) = r_j^{\ \mathds{1}[z_i=\mathbf{A}_{i,j}]} (1- r_j)^{\mathds{1}[z_i\ne \mathbf{A}_{i,j}]},
     \label{eq:item_worker}
 \end{equation}
 %
-where $\mathbbm{1}(\cdot)$ is an indicator function \jie{check on papers}. Note that Equation~\ref{eq:item_worker} considers a worker to be reliable if she does not name a candidate influencer who turns out not be a not real influencer. It is, however, likely that a worker does not name a candidate influencer $i$ simply because she did not think of $i$. That means that we can only partly treat the non-named candidate influencers as those the worker considers as non-influencers. It is, therefore, necessary to introduce negative sampling into the inference algorithm, which we introduce in Section~\ref{sec:em}. 
+where $\mathds{1}(\cdot)$ is an indicator function \jie{check on papers}. Note that Equation~\ref{eq:item_worker} considers a worker to be reliable if she does not name a candidate influencer who turns out not be a not real influencer. It is, however, likely that a worker does not name a candidate influencer $i$ simply because she did not think of $i$. That means that we can only partly treat the non-named candidate influencers as those the worker considers as non-influencers. It is, therefore, necessary to introduce negative sampling into the inference algorithm, which we introduce in Section~\ref{sec:em}. 
 
 Worker reliability $r_j$ is so far assumed to be a fixed parameter. In practice, we would like to distinguish our \emph{confidence} in estimating the reliability of the workers providing different numbers of answers: we should be more confident in estimating the reliability of workers who provide 50 answers than those who only provide 5 answers. To quantify the confidence in our inference, we adopt a Bayesian treatment of $r_j$ by introducing a prior:
 %
