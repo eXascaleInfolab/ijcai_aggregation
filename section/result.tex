@@ -79,7 +79,7 @@ Most importantly, our framework \sys achieves the best performance among all ans
 
 \noindent\textbf{Results of \sys Variants.}
 The comparison between \sys variants against feature-based methods is shown in Figure \ref{fig:variants}. \sys-EM outperforms both LR and MLP by 13.05\% and 19.95\% accuracy and by 23.23\% and 25.46\% AUC, respectively. These results clearly show the importance of considering worker reliability in aggregating workers' answers. Among the two variants, \sys outperforms \sys-EM by 2.65\% accuracy and 28.60\% AUC. This result indicates that modeling the worker reliability as a latent variable with a prior distribution not only makes the model more robust, but also improves the aggregation performance in terms of accuracy and AUC. 
-\begin{figure}[htb]
+\begin{figure}[]
 \begin{subfigure}[t]{0.33\columnwidth}
         \centering
     \pgfplotstableread[row sep=\\,col sep=&]{
@@ -159,7 +159,7 @@ The comparison between \sys variants against feature-based methods is shown in F
         \includegraphics[width=\columnwidth]{figs/beta_dist.eps}
         \caption{Reliability dist.}\label{fig:worker_reliability}
     \end{subfigure}
-   \caption{Performance of our four variants.} \label{fig:variants} 
+   \caption{Comparsion between feature-based methods and \sys variants measured by (a) Accuracy and (b) AUC. (c) shows two workers  with similar reliability of different confidence.} \label{fig:variants} 
 \end{figure}
 
 To quantitatively show the effect of modeling worker reliability as a latent variable, we depict in Figure~\ref{fig:worker_reliability} two examples of workers of similar reliability yet providing different number of answers. We observe that their reliability estimated by \sys-EM (dark bar in the figure), are hardly distinguiable; however, \sys provides extra insight that the estimated reliability of the worker in blue curve is more trustable than that of the worker in red curve.
