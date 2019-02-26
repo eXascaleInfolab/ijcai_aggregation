@@ -23,7 +23,7 @@ datasets.}\label{tab:datasets}
 
 \begin{table*}[t]
 \centering
-\caption{Performance (accuracy and AUC) of comparsion methods on the two datasets with supervision degree $s\_deg$ from 50\% to 90\%. The best performance is highlighted in bold; and the second best performance is marked by `*' for accuracy and by `+' for AUC.}\label{tab:comparision} 
+\caption{Performance (accuracy and AUC) comparison of aggregation techniques on two datasets with supervision degree $s\_deg$ from 50\% to 90\%. The best performance is highlighted in bold; and the second best performance is marked by `*' for accuracy and by `+' for AUC.}\label{tab:comparision} 
 \begin{tabular}{ll|ccccc|ccccc}
 \toprule
 \multirow{2}{*}{\textbf{Method}}  &   \multirow{2}{*}{\textbf{Metric}}  & \multicolumn{5}{|c|}{\textbf{Fashion}}      & \multicolumn{5}{c}{\textbf{InfoTech}} \jie{to update} \\ \cline{3-12}
@@ -43,16 +43,16 @@ datasets.}\label{tab:datasets}
 \end{table*}
 
 \smallskip
-\noindent\textbf{Comparison Methods.} Due to the lack of existing open-ended answers aggregation methods, we compare with the following state-of-the-art closed-pool answers aggregation methods: 1) ZenCrowd \cite{demartini2012zencrowd}, EM method that estimates worker reliability as a model parameter; 2) Dawid-Skene \cite{dawid1979maximum}, EM method that learns worker reliability as a confusion matrix; 3) GLAD \cite{whitehill2009whose}, EM method that simutaneously learn worker reliability and task difficulty; and 4) LFC \cite{raykar2010learning}, EM method 
-that incorporate priors in modeling worker reliability. To apply these methods to our problem, we use negative sampling to simulate workers' answers of non-influencers; we empirically find the optimal sampling rates for each comparison method. 
+\noindent\textbf{Comparison Methods.} Due to the lack of existing open-ended answers aggregation methods, we compare with the following state-of-the-art closed-pool answers aggregation methods: 1) ZenCrowd \cite{demartini2012zencrowd}, an EM method that estimates worker reliability as a model parameter; 2) Dawid-Skene \cite{dawid1979maximum}, an EM method that learns worker reliability as a confusion matrix; 3) GLAD \cite{whitehill2009whose}, an EM method that simultaneously learns worker reliability and task difficulty; and 4) LFC \cite{raykar2010learning}, an EM method 
+that incorporates priors in modeling worker reliability. To apply these methods to our problem, we use negative sampling to simulate workers' answers of non-influencers; we empirically determine the optimal sampling rates for each comparison method. 
 
-To investigate the benefit of modeling worker reliability as compared to feature-based methods, we compare logistic regression (LR) and multi-layer perceptron (MLP) with two variants of our framework: 1) \sys-EM: \sys that aggregates workers' answers however models worker reliability as a fixed paramter; and 2) \sys, the Bayesian version that models worker reliability as a latent variable.
+To investigate the benefit of modeling worker reliability as compared to feature-based methods, we compare our technique against logistic regression (LR) and multi-layer perceptron (MLP). We define two variants of our framework: 1) \sys-EM: \sys that aggregates workers' answers however models worker reliability as a fixed paramter; and 2) \sys, the Bayesian version that models worker reliability as a latent variable.
 
 
 
 
 \smallskip
-\noindent\textbf{Parameter Settings.} The parameters of our framework and those for model training are empirically set. We search for the best model architecture for MLP, and the predictor $f$ in \sys-EM and \sys, with 0, 1, and 2 hidden layers, and apply a grid search in \{64, 128, 256, 512, 1024\} for the dimension of the hidden layers. In model training, we select learning rates from \{0.0001, 0.001, 0.01, 0.1, 1\} for the learning of $\mathbf{W}_I$ in all variants of our framework, as well as for the learning of $r_j$ in \sys-EM. To investigate the impact of negative sampling, we experiment with sampling rate ($s\_rate$) from \{0, 1, 5, 10, 20, 50, 100\} where $s\_rate=5$ indicates that for each worker, the negative samples is five times the size of the candidate influencers named by each worker. 
+\noindent\textbf{Parameter Settings.} The parameters of our framework and those for model training are empirically set. We search for the best model architecture for MLP, and the predictor $f$ in \sys-EM and \sys, with 0, 1, and 2 hidden layers, and apply a grid search in \{64, 128, 256, 512, 1024\} for the dimension of the hidden layers. In model training, we select learning rates from \{0.0001, 0.001, 0.01, 0.1, 1\} for the learning of $\mathbf{W}_I$ in all variants of our framework, as well as for the learning of $r_j$ in \sys-EM. To investigate the impact of negative sampling, we experiment with sampling rate ($s\_rate$) from \{0, 1, 5, 10, 20, 50, 100\}  \mkh{0.1?} where $s\_rate=5$ indicates that for each worker, the negative samples is five times the size of the candidate influencers named by each worker. 
 
 \smallskip
 \noindent\textbf{Evaluation Protocols.} We split the labeled subset of candidate influencers into training, validation, and test sets. \sys is trained on the answers and the training set, tuned on the valiation set and evaluated on the test set. To investigate the impact of the degree of supervision ($s\_deg$) on \sys performance, we split the labeled subset by $s\_deg\in \{50\%, 60\%, 70\%, 80\%, 90\%\}$, where $s\_deg = 60\%$ means that 60\% of the labeled subset is used for training, and the rest for validation and test with equal split. We use accuracy and area under the precision-recall curve (AUC) to measure the performance. Higher values of accuracy and AUC indicate better performance.
@@ -62,22 +62,22 @@ To investigate the benefit of modeling worker reliability as compared to feature
 \subsection{Comparative Results}
 Table~\ref{sec:compres} summarizes the performance of the compared answers aggregation methods on the two datasets with different supervision degree. Several interesting findings are observed.
 
-First, we observe that ZenCrowd generally outperforms DS and GLAD. Recall that ZenCrowd is less expressive compared to DS and GLAD, as it only models worker reliability as a parameter. In comparison, DS models worker reliability as a confusion matrix, and GLAD futher models the task difficulty (in our context the ambiguity of a candidate influencer being the true influencer). The superior performance of ZenCrowd to that of DS and GLAD indicates that in our context, more expressive models do not necessary lead to higher performance. This is likely due to the high sparsity of worker-answer matrices (Table~\ref{tab:datasets}) that can easily lead to overfitting.
+First, we observe that ZenCrowd generally outperforms DS and GLAD. Recall that ZenCrowd is less expressive compared to DS and GLAD, as it only models worker reliability as a parameter. In comparison, DS models worker reliability as a confusion matrix, and GLAD further models the task difficulty (in our context the ambiguity of a candidate influencer being the true influencer). The superior performance of ZenCrowd  over DS and GLAD indicates that in our context, more expressive models do not necessary lead to higher performance. This is likely due to the high sparsity of worker-answer matrices (Table~\ref{tab:datasets}) that can easily lead to overfitting.
 
-Second, we observe that methods that model worker reliability as a latent variable with a prior distribution, namely LFC and our framework \sys, outperform the other methods. Such a result verifies the necessity of modeling worker reliability as a latent variable, as it helps to account for the confidence of estimating model parameters. This is particularly important to improve model robustness for sparse datasets as in our case. We  will give more results on this point in Section~\ref{sec:selfres}.
+Second, we observe that methods that model worker reliability as a latent variable with a prior distribution, namely LFC and our framework \sys, outperform the other methods. Such a result confirms the necessity of modeling worker reliability as a latent variable, as it helps to account for the confidence of estimating model parameters. This is particularly important to improve model robustness for sparse datasets as in our case. We  will give more results on this point in Section~\ref{sec:selfres}.
 
-Most importantly, our framework \sys achieves the best performance among all answers aggregation methods under comparsion: \sys improves the state of the art by \jie{add numbers} XX\% accuracy and XX\% AUC on Fashion, and by XX\% accuracy and XX\% AUC on InfoTech. The big improvements clearly demonstrate the effectiveness of our framework in open-ended answers aggregation. 
+Most importantly, our framework \sys achieves the best performance among all answers aggregation methods under comparison: \sys improves the state of the art by \jie{add numbers} XX\% accuracy and XX\% AUC on Fashion, and by XX\% accuracy and XX\% AUC on InfoTech. The big improvements clearly demonstrate the effectiveness of our framework in open-ended answers aggregation. 
 
 
 
 \smallskip
-\noindent\textbf{Impacts of Supervision Degree.} The supervision degree $s\_deg$ controls the amount of observed labels in model training. We observe that the performance of our framework increases along with the increase of $s\_deg$, as measured by both accuracy and AUC. This is natural as more labeled data provides more information in discriminating influencers from non influencers. Such a pattern, however, is not observed for the other methods that we compare to. This is likely due to the fact that the other methods do not take advantage of the social features, which are useful as they serve as means to propagate the labels to non-labeled candidate influencers. These results, therefore, suggest that \sys is better at utilizing existing labels for answers aggregation. 
+\noindent\textbf{Impacts of Supervision Degree.} The supervision degree $s\_deg$ controls the amount of observed labels in model training. We observe that the performance of our framework increases along with the increase of $s\_deg$, as measured by both accuracy and AUC. This is natural as more labeled data provides more information in discriminating influencers from non influencers. Such a pattern, however, is not observed for the other methods that we compare to. This is likely due to the fact that the other methods do not take advantage of the social features, which are useful as they serve as means to propagate the labels to non-labeled candidate influencers. These results, therefore, show that \sys is better at utilizing existing labels for answers aggregation. 
 
 \subsection{Results of \sys}
 \label{sec:selfres}
 
 \noindent\textbf{Results of \sys Variants.}
-The comparison between \sys variants against feature-based methods is shown in Figure \ref{fig:variants}. \sys-EM outperforms both LR and MLP by 13.05\% and XX\% accuracy and by 3.435\% and XX\% AUC, respectively. These results clearly show the importance of considering worker reliability in aggregating workers' answers. Among the two variants, \sys performs outperforms \sys-EM by 1.7\% accuracy and XX\% AUC. This result indicates that modeling the worker reliability as a latent variable with a prior distribution not only makes the model more robust, but also improves the aggregation performance in terms of accuracy and AUC. 
+The comparison between \sys variants against feature-based methods is shown in Figure \ref{fig:variants}. \sys-EM outperforms both LR and MLP by 13.05\% and XX\% accuracy and by 3.435\% and XX\% AUC, respectively. These results clearly show the importance of considering worker reliability in aggregating workers' answers. Among the two variants, \sys outperforms \sys-EM by 1.7\% accuracy and XX\% AUC. This result indicates that modeling the worker reliability as a latent variable with a prior distribution not only makes the model more robust, but also improves the aggregation performance in terms of accuracy and AUC. 
 \begin{figure}[htb]
 \begin{subfigure}[t]{0.47\columnwidth}
         \centering
@@ -93,7 +93,7 @@ The comparison between \sys variants against feature-based methods is shown in F
     bar width=.55cm,
     width=2\textwidth,
     height=1.5\textwidth,
-    legend style={at={(1.2,1.2)},
+    legend style={at={(1.2,1.25)},
        anchor=north,legend columns= 4, font = \LARGE},
     symbolic x coords={Fashion, InfoTech},
     xtick=data,
@@ -113,7 +113,7 @@ The comparison between \sys variants against feature-based methods is shown in F
     \end{axis}
     \end{tikzpicture}
     \vspace{-0.15in}
-        \caption{Accuracy\label{fig:acc}} 
+       \caption{Accuracy\label{fig:acc}} 
     \end{subfigure}% 
   \hfill \hskip -2.5ex %
     	\begin{subfigure}[t]{0.47\columnwidth}
@@ -178,7 +178,7 @@ To quantitatively show the effect of modeling worker reliability as a latent var
 
 \smallskip
 \noindent\textbf{Impacts of Sampling Rate.}
-The sampling rate $s\_rate$ controls the size of randomly sampled candidate influencers in estimating workers' reliability. The results are shown in Figure~\ref{fig:sys_perf_it}. We observe that, as the sampling rate varies from 0 to 100, the performance first increases then decreases. Such a result is consistent on both datasets, measured by both accuracy and AUC. The maximum performance is reached for $s\_rate= 10$ for Fashion and $s\_rate= 50$ for InfoTech, indicating that workers evaluation about the candidate influencers they do not name is more negative in InfoTech. Overal, the variation of the performance with different $s\_rate$ indicates the importance of selecting the optimal sampling rate. The similarity in performance variation across the two datasets demonstrates the robustness of \sys.
+The sampling rate $s\_rate$ controls the size of randomly sampled candidate influencers in estimating workers' reliability. The results are shown in Figure~\ref{fig:sys_perf_it}. We observe that, as the sampling rate varies from 0 to 100, the performance first increases then decreases. Such a result is consistent on both datasets, measured by both accuracy and AUC. The maximum performance is reached for $s\_rate= 10$ for Fashion and $s\_rate= 50$ for InfoTech, indicating that workers evaluation about the candidate influencers they do not name is more negative in InfoTech. Overall, the variation of the performance with different $s\_rate$ indicates the importance of selecting the optimal sampling rate. The similarity in performance variation across the two datasets demonstrates the robustness of \sys.
 
 \begin{figure}[htb]\centering
 	\begin{subfigure}[t]{0.47\columnwidth}

@@ -27,11 +27,11 @@ where $\mathbbm{1}(\cdot)$ is an indicator function \jie{check on papers}. Note 
 Worker reliability $r_j$ is so far assumed to be a fixed parameter. In practice, we would like to distinguish our \emph{confidence} in estimating the reliability of the workers providing different numbers of answers: we should be more confident in estimating the reliability of workers who provide 50 answers than those who only provide 5 answers. To quantify the confidence in our inference, we adopt a Bayesian treatment of $r_j$ by introducing a prior:
 %
 \begin{equation}
-        r_j \sim Beta(A,B).
+        r_j \sim Beta(A,B),
         \label{eq:rj_dist}
 \end{equation}
 %
-where $A$ and $B$ are the parameters of the prior distribution. The incorporation of confidence will make our framework more robust to overfitting, as we show in our experiments. 
+where $A$ and $B$ are the parameters of the prior distribution. The incorporation of confidence will make our framework more robust to overfitting, as we show later in our experiments. 
 
 The overall \sys framework is depicted in Figure~\ref{fig:graphical_model}. Model learning concerns parameter learning for $\mathcal{W}_I$ (and $r_j$ when modeled as a fixed parameter) and posterior inference for $z_i$ (and $r_j$ when modeled as a latent variable).  
 
@@ -61,7 +61,7 @@ The overall \sys framework is depicted in Figure~\ref{fig:graphical_model}. Mode
 
 \end{tikzpicture}
 }
-\caption{Graphical model representation of \sys. Double (greyed) circles represent observed variables, while single circles represent latent variables.  Squares represent model parameters. We note that worker reliability $r_j$ can either be a fixed parameter or a latent variable (thus, it is denoted by a dashed circle in the figure). Edges represent conditional relationship in answer generation.}
+\caption{Graphical representation of \sys. Double (greyed) circles represent observed variables, while single circles represent latent variables.  Squares represent model parameters. We note that worker reliability $r_j$ can either be a fixed parameter or a latent variable (thus, it is denoted by a dashed circle in the figure). Edges represent conditional relationship in answer generation.}
 \label{fig:graphical_model}
 \end{figure}
 
