@@ -52,7 +52,7 @@ To investigate the benefit of modeling worker reliability as compared to feature
 
 
 \smallskip
-\noindent\textbf{Parameter Settings.} The parameters of our framework and those for model training are empirically set. We search for the best model architecture for MLP, and the predictor $f$ in \sys-EM and \sys, with 0, 1, and 2 hidden layers; we apply a grid search in \{64, 128, 256, 512, 1024\} for the dimension of the hidden layers. In model training, we select learning rates from \{0.0001, 0.001, 0.01, 0.1, 1\} for the learning of $\mathbf{W}_I$ in all variants of our framework, as well as for the learning of $r_j$ in \sys-EM. To investigate the impact of negative sampling, we experiment with sampling rate ($s\_rate$) from \{0, 0.1, 1, 10,  100\}  where $s\_rate=5$ indicates that for each worker, the negative samples is five times the size of the candidate influencers named by each worker. 
+\noindent\textbf{Parameter Settings.} The parameters of our framework and those for model training are empirically set. We search for the best model architecture for MLP, and the predictor $f$ in \sys-EM and \sys, with 0, 1, and 2 hidden layers, and apply a grid search in \{64, 128, 256, 512, 1024\} for the dimension of the hidden layers. In model training, we select learning rates from \{0.0001, 0.001, 0.01, 0.1, 1\} for the learning of $\mathbf{W}_I$ in all variants of our framework, as well as for the learning of $r_j$ in \sys-EM. To investigate the impact of negative sampling, we experiment with sampling rate ($s\_rate$) from \{0, 1, 5, 10, 20, 50, 100\}  \mkh{0.1?} where $s\_rate=5$ indicates that for each worker, the negative samples is five times the size of the candidate influencers named by each worker. 
 
 \smallskip
 \noindent\textbf{Evaluation Protocols.} We split the labeled subset of candidate influencers into training, validation, and test sets. \sys is trained on the answers and the training set, tuned on the valiation set and evaluated on the test set. To investigate the impact of the degree of supervision ($s\_deg$) on \sys performance, we split the labeled subset by $s\_deg\in \{50\%, 60\%, 70\%, 80\%, 90\%\}$, where $s\_deg = 60\%$ means that 60\% of the labeled subset is used for training, and the rest for validation and test with equal split. We use accuracy and area under the precision-recall curve (AUC) to measure the performance. Higher values of accuracy and AUC indicate better performance.
@@ -77,7 +77,7 @@ Most importantly, our framework \sys achieves the best performance among all ans
 \label{sec:selfres}
 
 \noindent\textbf{Results of \sys Variants.}
-The comparison between \sys variants against feature-based methods is shown in Figure \ref{fig:variants}. \sys-EM outperforms both LR and MLP by 13.05\% and XX\% accuracy and by 3.435\% and XX\% AUC, \jie{add numbers} respectively. These results clearly show the importance of considering worker reliability in aggregating workers' answers. Among the two variants, \sys outperforms \sys-EM by 1.7\% accuracy and XX\% AUC. This result indicates that modeling the worker reliability as a latent variable with a prior distribution not only makes the model more robust, but also improves the aggregation performance in terms of accuracy and AUC. 
+The comparison between \sys variants against feature-based methods is shown in Figure \ref{fig:variants}. \sys-EM outperforms both LR and MLP by 13.05\% and XX\% accuracy and by 3.435\% and XX\% AUC, respectively. These results clearly show the importance of considering worker reliability in aggregating workers' answers. Among the two variants, \sys outperforms \sys-EM by 1.7\% accuracy and XX\% AUC. This result indicates that modeling the worker reliability as a latent variable with a prior distribution not only makes the model more robust, but also improves the aggregation performance in terms of accuracy and AUC. 
 \begin{figure}[htb]
 \begin{subfigure}[t]{0.4\columnwidth}
         \centering
@@ -198,6 +198,7 @@ The sampling rate $s\_rate$ controls the size of randomly sampled candidate infl
     coordinates 
  {
     (0,0.5861)
+    (25,0.615)
     (50,0.625)
     (75,0.7027)
     (100,0.6944)
@@ -243,6 +244,7 @@ The sampling rate $s\_rate$ controls the size of randomly sampled candidate infl
     coordinates 
  {
 (0,	0.2125)
+(25, 0.2293)
 (50,	0.23116	)
 (75,	0.25349)
 (100,	0.3486560	)
