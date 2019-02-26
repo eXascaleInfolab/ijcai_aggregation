@@ -79,7 +79,7 @@ Most importantly, our framework \sys achieves the best performance among all ans
 \noindent\textbf{Results of \sys Variants.}
 The comparison between \sys variants against feature-based methods is shown in Figure \ref{fig:variants}. \sys-EM outperforms both LR and MLP by 13.05\% and XX\% accuracy and by 3.435\% and XX\% AUC, respectively. These results clearly show the importance of considering worker reliability in aggregating workers' answers. Among the two variants, \sys outperforms \sys-EM by 1.7\% accuracy and XX\% AUC. This result indicates that modeling the worker reliability as a latent variable with a prior distribution not only makes the model more robust, but also improves the aggregation performance in terms of accuracy and AUC. 
 \begin{figure}[htb]
-\begin{subfigure}[t]{0.4\columnwidth}
+\begin{subfigure}[t]{0.32\columnwidth}
         \centering
     \pgfplotstableread[row sep=\\,col sep=&]{
        cases & LR & MLP & EM & VEM \\
@@ -87,22 +87,22 @@ The comparison between \sys variants against feature-based methods is shown in F
        InfoTech    & 0.511 & 0.6  & 0.66235&0.6764 \\
     }\mydata
 
-    \begin{tikzpicture}[scale=0.4]
+    \begin{tikzpicture}[scale=0.5]
     \begin{axis}[
     ybar,
-    bar width=.55cm,
+    bar width=.3cm,
     width=2\textwidth,
     height=1.5\textwidth,
-    legend style={at={(1.2,1.25)},
+    legend style={at={(1.3,1.35)},
        anchor=north,legend columns= 4, font = \LARGE},
     symbolic x coords={Fashion, InfoTech},
     xtick=data,
     enlarge x limits=0.3,
     ymin=0.4,ymax=0.80,
     ylabel={Accuracy},
-    yticklabel style = {font=\huge,xshift=0.5ex},
-    xticklabel style = {font=\huge,yshift=0.5ex},
-    ylabel style ={font = \huge},
+    yticklabel style = {xshift=0.5ex},
+    xticklabel style = {yshift=0.5ex},
+    ylabel style ={yshift=-2ex},
     ymajorgrids=true
     ]
     \addplot[draw=gray,fill=gray!40!white, thick] table[x=cases,y=LR]{\mydata};
@@ -116,7 +116,7 @@ The comparison between \sys variants against feature-based methods is shown in F
        \caption{Accuracy\label{fig:acc}} 
     \end{subfigure}% 
   \hfill \hskip -2.5ex %
-    	\begin{subfigure}[t]{0.4\columnwidth}
+    	\begin{subfigure}[t]{0.32\columnwidth}
         \centering
   \centering
     \pgfplotstableread[row sep=\\,col sep=&]{
@@ -125,22 +125,22 @@ The comparison between \sys variants against feature-based methods is shown in F
        InfoTech   &0.18673464  & 0.2154  & 0.251&0.259 \\
     }\mydata
 
-    \begin{tikzpicture}[scale=0.4]
+    \begin{tikzpicture}[scale=0.5]
     \begin{axis}[
     ybar,
-    bar width=.55cm,
+    bar width=.3cm,
     width=2\textwidth,
     height=1.5\textwidth,
-    legend style={at={(0.67,1.2)},
+    legend style={at={(1,1.5)},
        anchor=north,legend columns= 4, font = \LARGE},
     symbolic x coords={Fashion, InfoTech},
     xtick=data,
     enlarge x limits=0.3,
     ymin=0.1,ymax=0.5,
     ylabel={AUC},
-    yticklabel style = {font=\huge,xshift=0.5ex},
-    xticklabel style = {font=\huge,yshift=0.5ex},
-    ylabel style ={font = \huge},
+    yticklabel style = {xshift=0.5ex},
+    xticklabel style = {yshift=0.5ex},
+    ylabel style ={yshift=-2ex},
     ymajorgrids=true
     ]
     \addplot[draw=gray,fill=gray!40!white, thick] table[x=cases,y=LR]{\mydata};
@@ -153,10 +153,10 @@ The comparison between \sys variants against feature-based methods is shown in F
         \caption{AUC\label{fig:AUC}} 
     \end{subfigure}% 
      \hfill \hskip -4ex %
-    	\begin{subfigure}[t]{0.3\columnwidth}
+    	\begin{subfigure}[t]{0.32\columnwidth}
         \centering
         \includegraphics[width=\columnwidth]{figs/beta_dist.eps}
-        \caption{Worker reliability distribution}\label{fig:worker_reliability}
+        \caption{Reliability dist.}\label{fig:worker_reliability}
     \end{subfigure}
    \caption{Performance of our four variants.} \label{fig:variants} 
 \end{figure}
@@ -168,7 +168,7 @@ To quantitatively show the effect of modeling worker reliability as a latent var
 
 \smallskip
 \noindent\textbf{Impacts of Sampling Rate.}
-The sampling rate $s\_rate$ controls the size of randomly sampled candidate influencers in estimating workers' reliability. The results are shown in Figure~\ref{fig:sys_perf_it}. We observe that, as the sampling rate varies from 0 to 100, the performance first increases then decreases. Such a result is consistent on both datasets, measured by both accuracy and AUC. The maximum performance is reached for $s\_rate= 10$ for Fashion and $s\_rate= 0.1$ for InfoTech, indicating that workers evaluation about the candidate influencers they do not name is more negative in InfoTech. Overall, the variation of the performance with different $s\_rate$ indicates the importance of selecting the optimal sampling rate. The similarity in performance variation across the two datasets demonstrates the robustness of \sys.
+The sampling rate $s\_rate$ controls the size of randomly sampled candidate influencers in estimating workers' reliability. The results are shown in Figure~\ref{fig:sys_perf_it}. We observe that, as the sampling rate varies from 0 to 100, the performance first increases then decreases. Such a result is consistent on both datasets, measured by both accuracy and AUC. The maximum performance is reached for $s\_rate= 10$ for Fashion and $s\_rate= 0.1$ for InfoTech, indicating that workers' evaluation about the candidate influencers they do not name is more negative in Fashion. Overall, the variation of the performance with different $s\_rate$ indicates the importance of selecting the optimal sampling rate. The similarity in performance variation across the two datasets demonstrates the robustness of \sys.
 
 \begin{figure}[htb]\centering
 	\begin{subfigure}[t]{0.47\columnwidth}
