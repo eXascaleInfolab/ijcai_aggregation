@@ -79,7 +79,7 @@ Most importantly, our framework \sys achieves the best performance among all ans
 \noindent\textbf{Results of \sys Variants.}
 The comparison between \sys variants against feature-based methods is shown in Figure \ref{fig:variants}. \sys-EM outperforms both LR and MLP by 13.05\% and XX\% accuracy and by 3.435\% and XX\% AUC, respectively. These results clearly show the importance of considering worker reliability in aggregating workers' answers. Among the two variants, \sys outperforms \sys-EM by 1.7\% accuracy and XX\% AUC. This result indicates that modeling the worker reliability as a latent variable with a prior distribution not only makes the model more robust, but also improves the aggregation performance in terms of accuracy and AUC. 
 \begin{figure}[htb]
-\begin{subfigure}[t]{0.32\columnwidth}
+\begin{subfigure}[t]{0.33\columnwidth}
         \centering
     \pgfplotstableread[row sep=\\,col sep=&]{
        cases & LR & MLP & EM & VEM \\
@@ -116,7 +116,7 @@ The comparison between \sys variants against feature-based methods is shown in F
        \caption{Accuracy\label{fig:acc}} 
     \end{subfigure}% 
   \hfill \hskip -2.5ex %
-    	\begin{subfigure}[t]{0.32\columnwidth}
+    	\begin{subfigure}[t]{0.33\columnwidth}
         \centering
   \centering
     \pgfplotstableread[row sep=\\,col sep=&]{
@@ -153,7 +153,7 @@ The comparison between \sys variants against feature-based methods is shown in F
         \caption{AUC\label{fig:AUC}} 
     \end{subfigure}% 
      \hfill \hskip -4ex %
-    	\begin{subfigure}[t]{0.32\columnwidth}
+    	\begin{subfigure}[t]{0.33\columnwidth}
         \centering
         \includegraphics[width=\columnwidth]{figs/beta_dist.eps}
         \caption{Reliability dist.}\label{fig:worker_reliability}
