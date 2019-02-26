@@ -45,7 +45,7 @@ datasets.}\label{tab:datasets}
 
 \smallskip
 \noindent\textbf{Comparison Methods.} Due to the lack of existing open-ended answers aggregation methods, we compare with the following state-of-the-art closed-pool answers aggregation methods: 1) ZenCrowd \cite{demartini2012zencrowd}, an EM method that estimates worker reliability as a model parameter; 2) Dawid-Skene \cite{dawid1979maximum}, an EM method that learns worker reliability as a confusion matrix; 3) GLAD \cite{whitehill2009whose}, an EM method that simultaneously learns worker reliability and task difficulty; and 4) LFC \cite{raykar2010learning}, an EM method 
-that incorporates priors in modeling worker reliability. To apply these methods to our problem, we use negative sampling to simulate \pcm{is it really simulate or do you take the non-influencers answers from the crowd?} workers' answers of non-influencers \pcm{what do you take as negative samples? not sure I understand...}; we empirically determine the optimal sampling rates for each comparison method. 
+that incorporates priors in modeling worker reliability. To apply these methods to our problem, we use negative sampling to simulate a worker' answers of non-influencers by sampling the candidate influencers she does not name \jie{is this clear}; we empirically determine the optimal sampling rates for each comparison method. 
 
 To investigate the benefit of modeling worker reliability as compared to feature-based methods, we compare our technique against logistic regression (LR) and multi-layer perceptron (MLP). We define two variants of our framework: 1) \sys-EM: \sys that aggregates workers' answers however models worker reliability as a fixed parameter; and 2) \sys, the Bayesian version that models worker reliability as a latent variable.
 
@@ -53,7 +53,7 @@ To investigate the benefit of modeling worker reliability as compared to feature
 
 
 \smallskip
-\noindent\textbf{Parameter Settings.} The parameters of our framework and those for model training are empirically set. We search for the best model architecture for MLP, and the predictor $f$ in \sys-EM and \sys, with 0, 1, and 2 hidden layers, and apply a grid search in \{64, 128, 256, 512, 1024\} for the dimension of the hidden layers. In model training, we select learning rates from \{0.0001, 0.001, 0.01, 0.1, 1\} for the learning of $\mathbf{W}_I$ in all variants of our framework, as well as for the learning of $r_j$ in \sys-EM. To investigate the impact of negative sampling, we experiment with sampling rates ($s\_rate$) from \{0, 0.1, 1, 10, 100\} where $s\_rate=10$ indicates for example that for each worker, the negative samples are ten times the size of the candidate influencers named by each worker \pcm{'the positive answers given by the worker' ?}. 
+\noindent\textbf{Parameter Settings.} The parameters of our framework and those for model training are empirically set. We search for the best model architecture for MLP, and the predictor $f$ in \sys-EM and \sys, with 0, 1, and 2 hidden layers, and apply a grid search in \{64, 128, 256, 512, 1024\} for the dimension of the hidden layers. In model training, we select learning rates from \{0.0001, 0.001, 0.01, 0.1, 1\} for the learning of $\mathbf{W}_I$ in all variants of our framework, as well as for the learning of $r_j$ in \sys-EM. To investigate the impact of negative sampling, we experiment with sampling rates ($s\_rate$) from \{0, 0.1, 1, 10, 100\} where $s\_rate=10$ indicates for example that for each worker, the negative samples are ten times the size of the candidate influencers named by each worker \pcm{'the positive answers given by the worker' ?}. \jie{right; but note that workers only give positive answers; negative answers are simulated.}
 
 \smallskip
 \noindent\textbf{Evaluation Protocols.} We split the labeled subset of candidate influencers into training, validation, and test sets. \sys is trained on the answers and on the training set, tuned on the validation set and evaluated on the test set. To investigate the impact of the degree of supervision ($s\_deg$) on \sys performance, we split the labeled subset by $s\_deg\in \{50\%, 60\%, 70\%, 80\%, 90\%\}$, where $s\_deg = 60\%$ means that 60\% of the labeled subset is used for training, and the rest for validation and test with equal split. We use accuracy and area under the precision-recall curve (AUC) to measure the performance. Higher values of accuracy and AUC indicate better performance.
@@ -63,7 +63,7 @@ To investigate the benefit of modeling worker reliability as compared to feature
 \subsection{Comparative Results}
 Table~\ref{sec:compres} summarizes the performance of the answers aggregation methods on the two datasets with different supervision degrees. Several interesting findings can be made.
 
-First, we observe that ZenCrowd generally outperforms DS and GLAD \pcm{yeay!}. Recall that ZenCrowd is less expressive compared to DS and GLAD, as it only models worker reliability as a parameter. In comparison, DS models worker reliability as a confusion matrix, and GLAD further models the task difficulty (in our context the ambiguity of a candidate influencer being the true influencer). The superior performance of ZenCrowd  over DS and GLAD indicates that in our context, more expressive models do not necessary lead to higher performance. This is likely due to the high sparsity of worker-answer matrices (Table~\ref{tab:datasets}) that can easily lead to overfitting.
+First, we observe that ZenCrowd generally outperforms DS and GLAD. Recall that ZenCrowd is less expressive compared to DS and GLAD, as it only models worker reliability as a parameter. In comparison, DS models worker reliability as a confusion matrix, and GLAD further models the task difficulty (in our context the ambiguity of a candidate influencer being the true influencer). The superior performance of ZenCrowd  over DS and GLAD indicates that in our context, more expressive models do not necessary lead to higher performance. This is likely due to the high sparsity of worker-answer matrices (Table~\ref{tab:datasets}) that can easily lead to overfitting.
 
 Second, we observe that methods that model worker reliability as a latent variable with a prior distribution, namely LFC and our framework \sys, outperform the other methods. Such a result confirms the necessity of modeling worker reliability as a latent variable, as it helps to account for the confidence in estimating model parameters. This is particularly important to improve model robustness for sparse datasets as for our case. We  will give more results on this point in Section~\ref{sec:selfres}.
 
@@ -184,10 +184,10 @@ The sampling rate $s\_rate$ controls the size of randomly sampled candidate infl
     ytick={0.6,0.65,0.7,0.75,0.8},
        legend style={at={(1.15,1.25)},
        anchor=north,legend columns= 4, font = \LARGE},
-    yticklabel style = {font=\huge,xshift=0ex},
-    xticklabel style = {font=\huge,yshift=0ex},
-    ylabel style ={font = \huge, yshift=2ex},
-    xlabel style ={font = \huge},
+    yticklabel style = {font=\LARGE,xshift=0ex},
+    xticklabel style = {font=\LARGE,yshift=0ex},
+    ylabel style ={font = \LARGE, yshift=2ex},
+    xlabel style ={font = \LARGE},
     ymajorgrids=true,
     grid style=dashed,
     width=2\textwidth,
@@ -231,10 +231,10 @@ The sampling rate $s\_rate$ controls the size of randomly sampled candidate infl
     ytick={0.2,0.25,0.3,0.35,0.4,0.45},
        legend style={at={(0.67,1.2)},
        anchor=north,legend columns= 4, font = \LARGE},
-    yticklabel style = {font=\huge,xshift=0ex},
-    xticklabel style = {font=\huge,yshift=0ex},
-    ylabel style ={font = \huge, yshift=2ex},
-    xlabel style ={font = \huge},
+    yticklabel style = {font=\LARGE,xshift=0ex},
+    xticklabel style = {font=\LARGE,yshift=0ex},
+    ylabel style ={font = \LARGE, yshift=2ex},
+    xlabel style ={font = \LARGE},
     ymajorgrids=true,
     grid style=dashed,
     width=2\textwidth,
@@ -278,10 +278,10 @@ The sampling rate $s\_rate$ controls the size of randomly sampled candidate infl
     ytick={0.55,0.6,0.65,0.7,0.75,0.8},
        legend style={at={(0.67,1.2)},
        anchor=north,legend columns= 4, font = \LARGE},
-    yticklabel style = {font=\huge,xshift=0ex},
-    xticklabel style = {font=\huge,yshift=0ex},
-    ylabel style ={font = \huge, yshift=2ex},
-    xlabel style ={font = \huge},
+    yticklabel style = {font=\LARGE,xshift=0ex},
+    xticklabel style = {font=\LARGE,yshift=0ex},
+    ylabel style ={font = \LARGE, yshift=2ex},
+    xlabel style ={font = \LARGE},
     ymajorgrids=true,
     grid style=dashed,
     width=2\textwidth,
@@ -325,10 +325,10 @@ The sampling rate $s\_rate$ controls the size of randomly sampled candidate infl
     ytick={0.1,0.15,0.2,0.25,0.3,0.35},
          legend style={at={(0.67,1.2)},
        anchor=north,legend columns= 4, font = \LARGE},
-    yticklabel style = {font=\huge,xshift=0ex},
-    xticklabel style = {font=\huge,yshift=0ex},
-    ylabel style ={font = \huge, yshift=2ex},
-    xlabel style ={font = \huge},
+    yticklabel style = {font=\LARGE,xshift=0ex},
+    xticklabel style = {font=\LARGE,yshift=0ex},
+    ylabel style ={font = \LARGE, yshift=2ex},
+    xlabel style ={font = \LARGE},
     ymajorgrids=true,
     grid style=dashed,
     width=2\textwidth,
