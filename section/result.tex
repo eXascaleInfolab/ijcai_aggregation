@@ -11,7 +11,7 @@
 %\small
 \centering \caption{Descriptive statistics of the
 datasets.}\label{tab:datasets}
-%\vspace{-0.05in}
+\vspace{-0.05in}
 \addtolength{\tabcolsep}{-1mm}
 \begin{tabular}{lcccc}
 \toprule
@@ -20,7 +20,7 @@ datasets.}\label{tab:datasets}
     InfoTech & 1057 & 200 &1643 & 99.22\% \\
 \bottomrule
 \end{tabular}
-% \vspace{-0.1in}
+\vspace{-0.1in}
 \end{table}
 
 \begin{table*}[t]
@@ -164,6 +164,7 @@ The comparison between \sys variants against feature-based methods is shown in F
         \caption{Reliability dist.}\label{fig:worker_reliability}
     \end{subfigure}
    \caption{Comparsion between feature-based methods and \sys variants measured by (a) Accuracy and (b) AUC. (c) shows two workers  with similar reliability of different confidence.} \label{fig:variants} 
+   \vspace{-0.1in}
 \end{figure}
 
 To quantitatively show the effect of modeling worker reliability as a latent variable, we depict in Figure~\ref{fig:worker_reliability} two examples of workers of similar reliability yet providing different number of answers. We observe that their reliability estimated by \sys-EM (dark bar in the figure), are hardly distinguiable; however, \sys provides extra insight that the estimated reliability of the worker in blue curve is more trustable than that of the worker in red curve.
@@ -363,5 +364,6 @@ The sampling rate $s\_rate$ controls the size of randomly sampled candidate infl
  \caption{InfoTech - AUC\label{fig:AUC_sr_it}} 
  \end{subfigure}
    \caption{Performance of \sys with varying $s\_rate$.}\label{fig:sys_perf_it} 
+   \vspace{-0.1in}
 \end{figure}
 
