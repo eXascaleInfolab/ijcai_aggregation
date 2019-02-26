@@ -12,7 +12,7 @@ To infer the true label of a candidate social influencer, we adopt a Bayesian ne
     \label{eq:dis_item}
 \end{equation}
 %
-where $\theta_i$ is the parameter of the distribution predicted by the social features of the candidate influencer through a linear model or a neural network, denoted by $f(\cdot)$; $\mathcal{W}_I$ is the parameter of the model; $\sigma$ is the sigmoid function. Note that $\mathcal{W}_I$ is shared among all candidate influencers, thus amortizing the inference \cite{gershman2014amortized} by exploiting the similarity among candidate influencers. 
+where $\theta_i$ is the parameter of the distribution predicted by the social features of the candidate influencer through a linear model or a neural network, denoted by $f(\cdot)$; $\mathcal{W}_I$ is the parameter of the model; $\sigma(\cdot)$ is the sigmoid function. Note that $\mathcal{W}_I$ is shared among all candidate influencers, thus amortizing the inference \cite{gershman2014amortized} by exploiting the similarity among candidate influencers. 
 
 
 We then model worker reliability by $r_j \in [0,1]$ $(j\in \mathcal{J})$, where $r_j=1$ indicates the worker is fully reliable and $r_j=0$ indicates the worker is not reliable. We use the reliability of a worker to define the probability of her named candidate influencer being a true influencer:
@@ -22,7 +22,7 @@ We then model worker reliability by $r_j \in [0,1]$ $(j\in \mathcal{J})$, where 
     \label{eq:item_worker}
 \end{equation}
 %
-where $\mathds{1}(\cdot)$ is an indicator function. Note that Equation~\ref{eq:item_worker} considers a worker to be reliable if she does not name a candidate influencer who is indeed not a real influencer. It is, however, likely that a worker does not name a candidate influencer $i$ simply because she did not think of $i$. That means that we can only partly treat the non-named candidate influencers as those the worker considers as non-influencers. It is, therefore, necessary to introduce negative sampling into the inference algorithm, which we introduce in Section~\ref{sec:em}. 
+where $\mathds{1}[\cdot]$ is an indicator function. Note that Equation~\ref{eq:item_worker} considers a worker to be reliable if she does not name a candidate influencer who is indeed not a real influencer. It is, however, likely that a worker does not name a candidate influencer $i$ simply because she did not think of $i$. That means that we can only partly treat the non-named candidate influencers as those the worker considers as non-influencers. It is, therefore, necessary to introduce negative sampling into the inference algorithm, which we explain in Section~\ref{sec:em}. 
 
 Worker reliability $r_j$ is so far assumed to be a fixed parameter. In practice, we would like to distinguish our \emph{confidence} in estimating the reliability of the workers providing different numbers of answers: we should be more confident in estimating the reliability of workers who provide 50 answers than those who only provide 5 answers. To quantify the confidence in our inference, we adopt a Bayesian treatment of $r_j$ by introducing a prior:
 %
@@ -33,7 +33,7 @@ Worker reliability $r_j$ is so far assumed to be a fixed parameter. In practice,
 %
 where $A$ and $B$ are the parameters of the prior distribution. The incorporation of confidence will make our framework more robust to overfitting, as we show later in our experiments. 
 
-The overall \sys framework is depicted in Figure~\ref{fig:graphical_model}. Model learning concerns parameter learning for $\mathcal{W}_I$ (and $r_j$ when modeled as a fixed parameter) and posterior inference for $z_i$ (and $r_j$ when modeled as a latent variable).  
+The overall \sys framework is depicted in Figure~\ref{fig:graphical_model}. Model learning constitutes parameter learning for $\mathcal{W}_I$ (and $r_j$ when modeled as a fixed parameter) and posterior inference for $z_i$ (and $r_j$ when modeled as a latent variable).  
 
 \begin{figure}[htb] 
 {
@@ -43,8 +43,8 @@ The overall \sys framework is depicted in Figure~\ref{fig:graphical_model}. Mode
   \node[obs,double]          (a)   {$\mathbf{A}_{i,j}$}; %
   \node[latent, above left=1.2 of a]  (z)   {$z_i$}; %
   \node(rect) [latent, dashed, above right=1.2 of a]  (r)   {$r_j$};
-  \node (rect)  [draw,dashed,minimum width=0.5cm,minimum height=0.5cm, above right=1.2 of r] (alpha){$A$};
-  \node (rect)  [draw,dashed,minimum width=0.5cm,minimum height=0.5cm, right=1.2 of r] (beta){$B$};
+  \node (rect)  [draw,thick,minimum width=0.5cm,minimum height=0.5cm, above right=1.2 of r] (alpha){$A$};
+  \node (rect)  [draw,thick,minimum width=0.5cm,minimum height=0.5cm, right=1.2 of r] (beta){$B$};
 
 
   \node(rect)  [draw,thick,minimum width=0.5cm,minimum height=0.5cm, left=2 of z] (w) {$\mathcal{W}_I$} ; 
@@ -73,7 +73,7 @@ For model learning, we first consider the case when worker reliability is modele
 We first introduce negative sampling, which affects parameter estimation in EM. For each worker $j\in \mathcal{J}$, we consider all candidate influencers named by her, and a random sample of candidate influencers she does not name as her answers of non-influencers, which are relevant in estimating her reliability. We denote the set of both types of candidate influencers as $\mathcal{I}_j$. While estimating the quality of the candidate influencer $i$, we also need to consider the negatively sampled answers; we denote the corresponding workers as $\mathcal{J}_i$.
 
 \smallskip
-\noindent\textbf{E-step.} We first denote $\mathbf{A}_{i,\mathcal{J}_i}$ as all relevant answers to candidate influencer $i$, i.e., $\mathbf{A}_{i,\mathcal{J}_i} = \{\mathbf{A}_{i,j}|j \in \mathcal{J}_i\}$. The E-step then infers the true label of a candidate influencer $i$ as follows:
+\noindent\textbf{E-step.} We first denote $\mathbf{A}_{i,\mathcal{J}_i}$ as all answers relevant to candidate influencer $i$, i.e., $\mathbf{A}_{i,\mathcal{J}_i} = \{\mathbf{A}_{i,j}|j \in \mathcal{J}_i\}$. The E-step then infers the true label of a candidate influencer $i$ as follows:
 %
 \begin{align}
     p(z_i) & \delequal p(z_i|\mathbf{A}_{i,\mathcal{J}_i},r_{j},x_i;\mathcal{W}_I) \nonumber\\
@@ -94,7 +94,7 @@ Given the true labels of candidate influencers inferred by the E-step, the M-ste
     +\underbrace{\sum_{z_i}p(z_i)\log p(z_i |\mathbf{x}_i;\mathcal{W}_I)}_{\mathcal{M}_2},
     \nonumber
 \end{align}
-where $p(z_i)$ is obtained by Equation~\ref{eq:dist_cond}. We observe that the M-step can be decomposed into two parts independent of each other. The first part, $\mathcal{M}_1$, can be solved via stochastic gradient ascent (SGA). The gradient of $r_j$ is given by:
+where $p(z_i)$ is obtained using Equation~\ref{eq:dist_cond}. We observe that the M-step can be decomposed into two parts independent from each other. The first part, $\mathcal{M}_1$, can be solved via stochastic gradient ascent (SGA). The gradient of $r_j$ is given by:
 %
 \begin{equation}
     \frac{\partial \mathcal{M}_1}{\partial r_j}=\frac{p(\mathbf{A}_{i,j}=z_i)}{r_j}-\frac{p(\mathbf{A}_{i,j}\neq z_i)}{1-r_j}.
@@ -106,7 +106,7 @@ The second part, $\mathcal{M}_2$, interestingly, is exactly the inverse of the c
 \subsection{Variational Inference for \sys}
 \label{sec:vi}
 
-We now introduce our variational inference method for the Bayesian version of \sys, i.e., when worker reliability is modeled as a latent variable with a prior distribution. In this case, a closed form solution for the EM updates is no longer possible. We develop a meanfield variational approach to approximate the posterior distribution over all hidden variables given the data, which in our model is $p(\mathbf{z},\mathbf{r} | \mathcal{D})$, where $\mathbf{z}$ and $\mathbf{r}$ are the latent true labels for all candidate influencers and for the reliability of all workers, respectively, and $\mathcal{D}$ is the observed data, i.e., $\mathcal{D}=\{\mathbf{A}, \mathbf{x}_i\ (\forall i\in\mathcal{I}), y_i\ (\forall i\in \mathcal{LI})\}$. 
+We now introduce our variational inference method for the Bayesian version of \sys, i.e., when worker reliability is modeled as a latent variable with a prior distribution. In this case, a closed form solution for the EM updates is no longer possible. We develop a meanfield variational approach to approximate the posterior distribution over all hidden variables given the data, which in our model is $p(\mathbf{z},\mathbf{r} | \mathcal{D})$, where $\mathbf{z}$ and $\mathbf{r}$ are the latent true labels for all candidate influencers and for the reliability of all workers, respectively, and $\mathcal{D}$ is the observed data, i.e., $\mathcal{D}=\{\mathbf{A}, \mathbf{x}_i\ (\forall i\in\mathcal{I}), y_i\ (\forall i\in \mathcal{I_L})\}$. 
 
 The main idea of variational inference \cite{tzikas2008variational} is to approximate $p(\mathbf{z},\mathbf{r} | \mathcal{D})$ by a variational distribution $q(\mathbf{z},\mathbf{r})$ and perform optimization to minimize the KL divergence between the two distributions. Meanfield variational inference allows for efficient optimization by assuming that $q(\mathbf{z},\mathbf{r})$ factorizes over the latent variables:
 \begin{equation}
@@ -125,14 +125,14 @@ where $\phi_i$, $\alpha_j$ and $\beta_j$ are variational parameters used to perf
 \noindent\textbf{Updating $z_i$.} For $z_i$, we have:
 %
 \begin{equation}
-q(z_i)    \propto \prod_{j \in \mathcal{J}_{i}} \exp{\{\mathbb{E}_{q(r_j)}[\log (P(\mathbf{A}_{i,j}|z_i,r_j))]\}}   \times P(z_i|x_i, \mathcal{W}_I). \\
+q(z_i)    \propto P(z_i|x_i; \mathcal{W}_I) \prod_{j \in \mathcal{J}_{i}} \exp{\{\mathbb{E}_{q(r_j)}[\log (P(\mathbf{A}_{i,j}|z_i,r_j))]\}} . \\
 \end{equation}
 %
 We distinguish between the following two cases:
 %
 \begin{align}
-  q(z_i=0)   &= \prod_{j \in \mathcal{J}_{i}} \exp{\{\mathbb{E}_{q(r_j)}[\log (1-r_j)]\}}\times (1-\theta_i) \nonumber, \\
-  q(z_i=1)   &= \prod_{j \in \mathcal{J}_{i}} \exp{\{\mathbb{E}_{q(r_j)}[\log (r_j)]\}}\times \theta_i .
+  q(z_i=0)   &= (1-\theta_i) \prod_{j \in \mathcal{J}_{i}} \exp{\{\mathbb{E}_{q(r_j)}[\log (1-r_j)]\}} \nonumber, \\
+  q(z_i=1)   &= \theta_i \prod_{j \in \mathcal{J}_{i}} \exp{\{\mathbb{E}_{q(r_j)}[\log (r_j)]\}}  .
 \label{eq:q_two_poss}                
 \end{align}
 %
@@ -144,8 +144,8 @@ The expectations can be evaluated as follows:
 \end{align}
 where $\Psi(\cdot)$ is the Digamma function. Therefore, the update equation for $z_i$ can be simplified as:
 \begin{align}
-    q(z_i=0)   &\propto \prod_{j \in \mathcal{J}_{i}} \exp{\{\Psi(\beta_j)-\Psi(\alpha_j+\beta_j)\}}\times (1-\theta_i), \nonumber \\  
-     q(z_i=1)    &\propto \prod_{j \in \mathcal{J}_{i}} \exp{\{ \Psi(\alpha_j)-\Psi(\alpha_j+\beta_j)\}}\times \theta_i  .
+    q(z_i=0)   &  \propto (1-\theta_i) \prod_{j \in \mathcal{J}_{i}} \exp{\{\Psi(\beta_j)-\Psi(\alpha_j+\beta_j)\}}, \nonumber \\  
+     q(z_i=1)    &  \propto \theta_i \prod_{j \in \mathcal{J}_{i}} \exp{\{ \Psi(\alpha_j)-\Psi(\alpha_j+\beta_j)\}} .
      \label{eq:qzi}
 \end{align}
 
@@ -153,7 +153,7 @@ where $\Psi(\cdot)$ is the Digamma function. Therefore, the update equation for 
 \noindent\textbf{Updating $r_j$.}  For $r_j$, we have:
 %
 \begin{equation}
-    q(r_j) \propto \prod_{i \in \mathcal{I}_j} \exp{\{\mathbb{E}_{q(z_i)}[\log{P(\mathbf{A}_{i,j}|r_j,z_i)}]\}} \times   {P(r_j)},
+    q(r_j) \propto {P(r_j)} \prod_{i \in \mathcal{I}_j} \exp{\{\mathbb{E}_{q(z_i)}[\log{P(\mathbf{A}_{i,j}|r_j,z_i)}]\}} ,
 \end{equation}
 %
 where $P(r_j)$ is the variational $r_j$ distribution from last iteration. The expectation can be evaluated as follows:
@@ -163,13 +163,13 @@ where $P(r_j)$ is the variational $r_j$ distribution from last iteration. The ex
 & 
 \left\{  
     \begin{array}{lr}
-        r_j^{\theta_i}  \times (1-r_j)^{(1 - \theta_i)}, &  \text{if\ } \mathbf{A}_{i,j}=1,\\  
-        r_j^{(1 - \theta_i)}  \times (1-r_j)^{\theta_i}, &  \text{if\ } \mathbf{A}_{i,j}=0.   
+        r_j^{\theta_i}  (1-r_j)^{(1 - \theta_i)}, &  \text{if\ } \mathbf{A}_{i,j}=1,\\  
+        r_j^{(1 - \theta_i)} (1-r_j)^{\theta_i}, &  \text{if\ } \mathbf{A}_{i,j}=0.   
     \end{array}  
 \right. 
 \end{align}
 %
-Therefore, $r_j$ can be efficiently inferred as follow:
+Therefore, $r_j$ can be efficiently inferred as follows:
 %
 \begin{align}  
 & q(r_j)  \propto \nonumber \\
@@ -186,13 +186,13 @@ Therefore, $r_j$ can be efficiently inferred as follow:
 
 
 The update rules described above play the role of the E-step in a variational EM approach. 
-The M-step for learning $\mathbf{W}_I$ can be performed in a similar manner as in the previous section. The overall coordinate ascent algorithm is presented in Algorithm~\ref{alg:vi-algo}. It iterates over the E-step (row 2-5) and M-step (row 6-7) until the evidence lower bound (ELBO) \cite{blei2017variational} -- equivalent to the KL-divergence as the optimization objective yet easily computable -- converges. We note that this algorithm has a similar computational complexity as the normal EM method: both Equations~\ref{eq:qzi} and \ref{eq:qrj} can be efficiently computed; and $\mathbf{W}_I$ can be efficiently updated in an incremental manner, i.e., it can learn for a few more epochs starting from the parameter learned in the previous iteration.
+The M-step for learning $\mathbf{W}_I$ can be performed in a similar manner as in the previous section. The overall coordinate ascent algorithm is presented in Algorithm~\ref{alg:vi-algo}. It iterates over the E-step (line 2-5) and M-step (line 6-7) until the evidence lower bound (ELBO) \cite{blei2017variational} -- equivalent to the KL-divergence as the optimization objective yet easily computable -- converges. We note that this algorithm has a similar computational complexity as the normal EM method: both Equations~\ref{eq:qzi} and \ref{eq:qrj} can be efficiently computed; and $\mathbf{W}_I$ can be efficiently updated in an incremental manner, i.e., it can learn for a few more epochs starting from the parameter learned in the previous iteration.
 
 \begin{algorithm2e}
     \SetKwInOut{Input}{Input}
     \SetKwInOut{Output}{Output}
     \SetKwInOut{Initialize}{Initialize}
-    \Input{$\mathbf{A}, \mathbf{x}_i\ (\forall i\in\mathcal{I}), y_i\ (\forall i\in \mathcal{LI})$}
+    \Input{$\mathbf{A}, \mathbf{x}_i\ (\forall i\in\mathcal{I}), y_i\ (\forall i\in \mathcal{I_L})$}
     \Output{Variational distributions: $q(z_i)$ and $q(r_j)$}
     \Initialize {Variational parameters: $\theta_i$, $\alpha_j=A$, $\beta_j=B$; parameter of the influencer predictor ($f$): $\mathbf{W}_I$}
     \While{the ELBO has not converged}{
